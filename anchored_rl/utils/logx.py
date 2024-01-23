@@ -9,6 +9,7 @@ import json
 import numpy as np
 import os.path as osp, time, atexit, os
 from anchored_rl.utils.serialization_utils import ExtraTypesEncoder
+import tensorflow as tf
 
 color2num = dict(
     gray=30,
@@ -215,7 +216,7 @@ class Logger:
     #            shutil.rmtree(fpath)
     #        tf.saved_model.simple_save(export_dir=fpath, **self.tf_saver_elements)
     #        joblib.dump(self.tf_saver_info, osp.join(fpath, 'model_info.pkl'))
-    
+
     def dump_tabular(self):
         """
         Write all of the diagnostics from the current iteration.
@@ -351,3 +352,16 @@ class EpochLogger(Logger):
         v = self.epoch_dict[key]
         vals = np.concatenate(v) if isinstance(v[0], np.ndarray) and len(v[0].shape)>0 else v
         return statistics_scalar(vals)
+
+
+class TensorflowLogger(EpochLogger):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.train_summary_writer = tf.summary.create_file_writer("logs")
+
+    def dump_tabular(self, step):
+        with self.train_summary_writer.as_default():
+            for key in self.log_headers:
+                val = self.log_current_row.get(key, 0.0)
+                tf.summary.scalar(key, val, step=step)
+        super().dump_tabular()
