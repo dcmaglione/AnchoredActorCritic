@@ -9,7 +9,8 @@ class Serialized_Argument:
     def __init__(self, name: str, **kwargs):
         self.name = name
         self.kwargs = kwargs
-
+    def __repr__(self) -> str:
+        return f"{self.name}--{self.kwargs}"
 def ignore_some_keys(hypers: dict[str, Any], keys = []):
     copied_hypers = copy.deepcopy(hypers)
     for ignore_me in keys:
@@ -65,6 +66,9 @@ class Arg_Serializer:
 
     def get_seed_folder_path(self, experiment_name: str, hypers: dict[str, Any]) -> str:
         return f"trained/{experiment_name}/{self.get_semantic_folder_name(hypers)}/seeds/{hypers['seed']}"
+
+    def __repr__(self) -> str:
+        return f"Arg_Serializer({self.abbrev_to_args})"
 
 
 def rl_alg_serializer():

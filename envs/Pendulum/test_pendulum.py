@@ -18,5 +18,5 @@ def parse_args(args=None):
 if __name__ == "__main__":
     # import matplotlib.pyplot as plt
     cmd_args = parse_args()
-    runs = test_utils.run_tests(Pendulum.PendulumEnv(render_mode="human" if cmd_args.render else None), cmd_args)
+    runs = test_utils.run_tests(Pendulum.PendulumEnv(render_mode="human" if cmd_args.render else None, g=15), cmd_args)
     print(f"{np.mean(runs):.4f}+-{np.std(runs):.4f}")

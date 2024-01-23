@@ -50,7 +50,8 @@ def many_fine_tunes(anchored = True):
     cmd_args = parser.parse_args()
     for folder in cmd_args.folders:
         cmd_args.prev_folder = Path(folder)
-        train_reacher.train(cmd_args, serializer)
+        print(folder)
+        # train_reacher.train(cmd_args, serializer)
 
 
 

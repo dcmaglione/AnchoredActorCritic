@@ -309,6 +309,7 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
     start_time = time.time()
     o, _ = env.reset()
     d, ep_ret, ep_len = False, 0.0, 0
+    print(hp.epochs)
     total_steps = hp.steps_per_epoch * hp.epochs
 
     # Main loop: collect experience in env and update/log each epoch
