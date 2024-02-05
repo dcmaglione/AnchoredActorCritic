@@ -14,8 +14,8 @@ def train(cmd_args, serializer):
         seed=cmd_args.seed,
         steps_per_epoch=1000,
         ac_kwargs={
-            "actor_hidden_sizes": (32, 32),
-            "critic_hidden_sizes": (64, 64),
+            "actor_hidden_sizes": (64, 64),
+            "critic_hidden_sizes": (128, 128),
         },
         start_steps=1000,
         replay_size=int(1e5),

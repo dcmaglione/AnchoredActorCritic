@@ -20,7 +20,13 @@ def many_fine_tunes(anchored = True):
         train_pendulum.train(cmd_args, serializer)
 
 
+def train_many(num_trainings = 6):
+    for i in range(num_trainings):
+        serializer = train_pendulum.pendulum_serializer()
+        cmd_args = args_utils.parse_arguments(serializer, args=["-r"])
+        train_pendulum.train(cmd_args, serializer)
+
 
 if __name__ == "__main__":
     many_fine_tunes(anchored = False)
-    # train_many_full_circles()
+    # train_many()
