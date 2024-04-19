@@ -10,7 +10,7 @@ setup(
     install_requires=[
         'gymnasium[classical_control]',
         'numpy',
-        'tensorflow-gpu',
+        'tensorflow',
         'tqdm'
     ],
     description="deep RL actor critic methods with anchors",

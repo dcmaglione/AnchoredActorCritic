@@ -133,6 +133,7 @@ class PendulumEnv(gym.Env):
         u = np.clip(u, -self.max_torque, self.max_torque)[0]
         self.last_u = u  # for rendering
         angle_rw = 1.0 - normed_angular_distance(th, self.setpoint)
+        torque_rw = (1.0 - np.abs(u)/self.max_torque)**0.2
 
         # This is the integrated dynamics of the pendulum in physics. 
         # we need to write a tensorflow version of this
@@ -144,7 +145,7 @@ class PendulumEnv(gym.Env):
 
         if self.render_mode == "human":
             self.render()
-        return self._get_obs(), angle_rw, False, False, {}
+        return self._get_obs(), (torque_rw*angle_rw)**0.5, False, False, {}
 
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
