@@ -120,7 +120,8 @@ class PendulumEnv(gym.Env):
         self.action_space = spaces.Box(
             low=-self.max_torque, high=self.max_torque, shape=(1,), dtype=np.float32
         )
-        self.observation_space = spaces.Box(low=-high, high=high, dtype=np.float32)
+        self.observation_space = spaces.Box(
+            low=-high, high=high, dtype=np.float32)
 
     def step(self, u):
         th, thdot = self.state  # th := theta
@@ -135,9 +136,10 @@ class PendulumEnv(gym.Env):
         angle_rw = 1.0 - normed_angular_distance(th, self.setpoint)
         torque_rw = (1.0 - np.abs(u)/self.max_torque)**0.2
 
-        # This is the integrated dynamics of the pendulum in physics. 
+        # This is the integrated dynamics of the pendulum in physics.
         # we need to write a tensorflow version of this
-        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) + 3.0 / (m * l**2) * u) * dt
+        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) +
+                            3.0 / (m * l**2) * u) * dt
         newthdot = np.clip(newthdot, -self.max_speed, self.max_speed)
         newth = th + newthdot * dt
 
@@ -197,7 +199,8 @@ class PendulumEnv(gym.Env):
                     (self.screen_dim, self.screen_dim)
                 )
             else:  # mode in "rgb_array"
-                self.screen = pygame.Surface((self.screen_dim, self.screen_dim))
+                self.screen = pygame.Surface(
+                    (self.screen_dim, self.screen_dim))
         if self.clock is None:
             self.clock = pygame.time.Clock()
 
@@ -220,19 +223,23 @@ class PendulumEnv(gym.Env):
         gfxdraw.aapolygon(self.surf, transformed_coords, (204, 77, 77))
         gfxdraw.filled_polygon(self.surf, transformed_coords, (204, 77, 77))
 
-        gfxdraw.aacircle(self.surf, offset, offset, int(rod_width / 2), (204, 77, 77))
+        gfxdraw.aacircle(self.surf, offset, offset,
+                         int(rod_width / 2), (204, 77, 77))
         gfxdraw.filled_circle(
             self.surf, offset, offset, int(rod_width / 2), (204, 77, 77)
         )
 
         rod_end = (rod_length, 0)
-        rod_end = pygame.math.Vector2(rod_end).rotate_rad(self.state[0] + np.pi / 2)
+        rod_end = pygame.math.Vector2(
+            rod_end).rotate_rad(self.state[0] + np.pi / 2)
         rod_end = (int(rod_end[0] + offset), int(rod_end[1] + offset))
         gfxdraw.aacircle(
-            self.surf, rod_end[0], rod_end[1], int(rod_width / 2), (204, 77, 77)
+            self.surf, rod_end[0], rod_end[1], int(
+                rod_width / 2), (204, 77, 77)
         )
         gfxdraw.filled_circle(
-            self.surf, rod_end[0], rod_end[1], int(rod_width / 2), (204, 77, 77)
+            self.surf, rod_end[0], rod_end[1], int(
+                rod_width / 2), (204, 77, 77)
         )
 
         fname = path.join(path.dirname(__file__), "assets/clockwise.png")
@@ -254,8 +261,10 @@ class PendulumEnv(gym.Env):
             )
 
         # drawing axle
-        gfxdraw.aacircle(self.surf, offset, offset, int(0.05 * scale), (0, 0, 0))
-        gfxdraw.filled_circle(self.surf, offset, offset, int(0.05 * scale), (0, 0, 0))
+        gfxdraw.aacircle(self.surf, offset, offset,
+                         int(0.05 * scale), (0, 0, 0))
+        gfxdraw.filled_circle(self.surf, offset, offset,
+                              int(0.05 * scale), (0, 0, 0))
 
         self.surf = pygame.transform.flip(self.surf, False, True)
         self.screen.blit(self.surf, (0, 0))
@@ -279,5 +288,5 @@ class PendulumEnv(gym.Env):
 
 
 def normed_angular_distance(a, b):
-    diff = ( b - a + np.pi ) % (2 * np.pi) - np.pi
-    return  np.abs(diff + 2*np.pi if diff < -np.pi else diff)/np.pi
+    diff = (b - a + np.pi) % (2 * np.pi) - np.pi
+    return np.abs(diff + 2*np.pi if diff < -np.pi else diff)/np.pi
