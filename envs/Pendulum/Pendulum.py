@@ -10,6 +10,8 @@ from gymnasium import spaces
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
 
+from GustOfWind import GustOfWind
+
 
 DEFAULT_X = np.pi
 DEFAULT_Y = 1.0
@@ -107,6 +109,9 @@ class PendulumEnv(gym.Env):
         self.setpoint = setpoint
         self.friction_coeff = friction_coeff
         self.air_resistance_coeff = air_resistance_coeff
+        self.wind_gust = GustOfWind(
+            mean_force=3.0, max_force=5.0, gust_duration=4, gust_interval=2)  # Feel free to tune these parameters
+        self.t = 0.0
 
         self.render_mode = render_mode
 
@@ -134,6 +139,7 @@ class PendulumEnv(gym.Env):
         dt = self.dt
         friction_coeff = self.friction_coeff
         air_resistance_coeff = self.air_resistance_coeff
+        wind_force = self.wind_gust.get_wind_force(self.t)
 
         u = np.clip(u, -self.max_torque, self.max_torque)[0]
         self.last_u = u  # for rendering
@@ -142,8 +148,8 @@ class PendulumEnv(gym.Env):
 
         # This is the integrated dynamics of the pendulum in physics.
         # we need to write a tensorflow version of this
-        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) + 3.0 / (m * l**2)
-                            * u - friction_coeff * thdot - air_resistance_coeff * thdot**2) * dt
+        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) + 3.0 / (m * l**2) * u - friction_coeff *
+                            thdot - air_resistance_coeff * thdot**2 + wind_force * np.cos(th)) * dt
         newthdot = np.clip(newthdot, -self.max_speed, self.max_speed)
         newth = th + newthdot * dt
 
