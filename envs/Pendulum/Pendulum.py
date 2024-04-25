@@ -97,7 +97,7 @@ class PendulumEnv(gym.Env):
         "render_fps": 60,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, g=10.0, screen=None, setpoint=0.0):
+    def __init__(self, render_mode: Optional[str] = None, g=10.0, screen=None, setpoint=0.0, friction_coeff=0.1, air_resistance_coeff=0.01):
         self.max_speed = 8
         self.max_torque = 2.0
         self.dt = 1.0/20.0
@@ -105,6 +105,8 @@ class PendulumEnv(gym.Env):
         self.m = 1.0
         self.l = 1.0
         self.setpoint = setpoint
+        self.friction_coeff = friction_coeff
+        self.air_resistance_coeff = air_resistance_coeff
 
         self.render_mode = render_mode
 
@@ -130,6 +132,8 @@ class PendulumEnv(gym.Env):
         m = self.m
         l = self.l
         dt = self.dt
+        friction_coeff = self.friction_coeff
+        air_resistance_coeff = self.air_resistance_coeff
 
         u = np.clip(u, -self.max_torque, self.max_torque)[0]
         self.last_u = u  # for rendering
@@ -138,8 +142,8 @@ class PendulumEnv(gym.Env):
 
         # This is the integrated dynamics of the pendulum in physics.
         # we need to write a tensorflow version of this
-        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) +
-                            3.0 / (m * l**2) * u) * dt
+        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) + 3.0 / (m * l**2)
+                            * u - friction_coeff * thdot - air_resistance_coeff * thdot**2) * dt
         newthdot = np.clip(newthdot, -self.max_speed, self.max_speed)
         newth = th + newthdot * dt
 
