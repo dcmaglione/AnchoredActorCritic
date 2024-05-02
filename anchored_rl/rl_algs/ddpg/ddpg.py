@@ -270,7 +270,7 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
             # reg_c = tf.squeeze(p_mean(tf.stack([spatial_c, temporal_c, before_tanh_c],axis=1), 0.0))
             # all_c = p_mean(tf.stack([scale_gradient(tf.squeeze(aq_c), 3e2), tf.squeeze(before_tanh_c)]), p=0.0)
             # all_c = scale_gradient(aq_c,0.0)
-            all_c = p_mean(tf.stack([scale_gradient(tf.squeeze(q_c), 3e2), scale_gradient(tf.squeeze(before_tanh_c),0.1)]), p=0.0)
+            all_c = p_mean(tf.stack([scale_gradient(tf.squeeze(q_c), 3e2), scale_gradient(tf.squeeze(before_tanh_c),1.0)]), p=0.0) # Modified to expand gradient
             # all_c = p_mean(tf.stack([ scale_gradient(aq_c, 3e2), scale_gradient(q_c, 3e2)], axis=1), 0.0)
             # all_c = q_c + 0.008*pi_diffs_c + 0.005*pi_bar_c + 0.025*center_c
             # if debug:

@@ -99,19 +99,21 @@ class PendulumEnv(gym.Env):
         "render_fps": 60,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, g=10.0, screen=None, setpoint=0.0, friction_coeff=0.1, air_resistance_coeff=0.01):
+    def __init__(self, render_mode: Optional[str] = None, g=10.0, screen=None, setpoint=0.0, static_friction_coeff=0.5, kinetic_friction_coeff=0.3, air_resistance_coeff=0.01):
         self.max_speed = 8
-        self.max_torque = 2.0
+        self.max_torque = 4.0
         self.dt = 1.0/20.0
         self.g = g
         self.m = 1.0
         self.l = 1.0
         self.setpoint = setpoint
-        self.friction_coeff = friction_coeff
+        # self.friction_coeff = friction_coeff
         self.air_resistance_coeff = air_resistance_coeff
         self.wind_gust = GustOfWind(
-            mean_force=3.0, max_force=5.0, gust_duration=4, gust_interval=2)  # Feel free to tune these parameters
+            mean_force=0.0, max_force=0.0, gust_duration=1, gust_interval=5)  # Feel free to tune these parameters
         self.t = 0.0
+        self.static_friction_coeff = static_friction_coeff
+        self.kinetic_friction_coeff = kinetic_friction_coeff
 
         self.render_mode = render_mode
 
@@ -137,14 +139,20 @@ class PendulumEnv(gym.Env):
         m = self.m
         l = self.l
         dt = self.dt
-        friction_coeff = self.friction_coeff
+        # friction_coeff = self.friction_coeff
         air_resistance_coeff = self.air_resistance_coeff
         wind_force = self.wind_gust.get_wind_force(self.t)
+        static_friction_coeff = self.static_friction_coeff
+        kinetic_friction_coeff = self.kinetic_friction_coeff
 
         u = np.clip(u, -self.max_torque, self.max_torque)[0]
         self.last_u = u  # for rendering
-        angle_rw = 1.0 - normed_angular_distance(th, self.setpoint)
-        torque_rw = (1.0 - np.abs(u)/self.max_torque)**0.2
+        angle_rw = (1.0 - normed_angular_distance(th, self.setpoint))
+        torque_rw = (1.0 - np.abs(u)/self.max_torque)
+
+        # Determine whether to apply static or kinetic friction
+        friction_coeff = static_friction_coeff if np.abs(thdot) < 1e-6 else kinetic_friction_coeff
+        # TODO: Look up some other oscillating spring w/ friction example
 
         # This is the integrated dynamics of the pendulum in physics.
         # we need to write a tensorflow version of this

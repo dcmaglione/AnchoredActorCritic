@@ -12,6 +12,7 @@ def parse_args(args=None):
     parser.add_argument('-r', '--render', action="store_true", help="render the env as it evaluates")
     parser.add_argument('-n', '--num_tests', type=int, default=20)
     parser.add_argument('-g', '--gravity', type=float, default=15.0)
+    parser.add_argument('-z', '--zero_action', action="store_true")
     # group = parser.add_mutually_exclusive_group()
     parser.add_argument('-l', '--use_latest', action="store_true", help="use the latest training run from the save_folder")
     return parser.parse_args(args)

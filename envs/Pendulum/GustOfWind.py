@@ -14,9 +14,10 @@ class GustOfWind:
             self.last_gust_start = t
             self.current_gust_end = t + self.gust_interval + np.random.randint(0, self.gust_duration)
             self.wind_force = self.mean_force
+            self.gust_direction = np.random.choice([-1, 1])  # Randomly choose the direction of the gust
 
         if t >= self.last_gust_start and t < self.current_gust_end:
             gust_strength = np.random.uniform(0, self.max_force)
-            self.wind_force = self.mean_force + np.sign(np.random.uniform(-1, 1)) * gust_strength
+            self.wind_force = self.mean_force + self.gust_direction * gust_strength
 
         return self.wind_force

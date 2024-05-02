@@ -7,7 +7,7 @@ pendulum_serializer = lambda: args_utils.Arg_Serializer.join(args_utils.Arg_Seri
     abbrev_to_args= {
         'setpoint': args_utils.Serialized_Argument(name='--setpoint', type=float, default=0.0, help='setpoint'),
             'g': args_utils.Serialized_Argument(name='--gravity', type=float, default=15.0, help='gravity')
-    }), args_utils.default_serializer(epochs=20))
+    }), args_utils.default_serializer(epochs=20, learning_rate=1e-3))
 
 def train(cmd_args, serializer):
     hp = HyperParams(

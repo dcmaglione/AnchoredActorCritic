@@ -8,7 +8,7 @@ def test(actor, env, seed=123, render=True, num_steps=100):
     low = env.action_space.low
     os = []
     rs = []
-    sumr = 0.0;
+    sumr = 0.0
     for _ in range(num_steps):
         o, r, d, _, i, = env.step(actor(o)*(high - low)/2.0 + (high + low)/2.0)
         if d:
@@ -21,10 +21,12 @@ def test(actor, env, seed=123, render=True, num_steps=100):
     print("reward sum:", sumr)
     return np.array(os), np.array(rs)
 
-def folder_to_results(env, render, num_tests, folder_path, steps=100, seed=123,  **kwargs):
+def folder_to_results(env, zero_action, render, num_tests, folder_path, steps=400, seed=123,  **kwargs):
     import tensorflow as tf
     saved = tf.saved_model.load(str(Path(folder_path, "actor")))
     def actor(x):
+        if zero_action:
+            return 0.0
         # print(np.array([x], dtype=np.float32))
         return saved(np.array([x], dtype=np.float32))[0]
     runs = np.array(list(map(lambda i: test(actor, env, seed=seed+i,
