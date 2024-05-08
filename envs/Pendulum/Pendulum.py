@@ -99,7 +99,7 @@ class PendulumEnv(gym.Env):
         "render_fps": 60,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, g=10.0, screen=None, setpoint=0.0, static_friction_coeff=0.5, kinetic_friction_coeff=0.3, air_resistance_coeff=0.01):
+    def __init__(self, render_mode: Optional[str] = None, g=10.0, screen=None, setpoint=0.0, static_friction_coeff=0.5, kinetic_friction_coeff=0.3):
         self.max_speed = 8
         self.max_torque = 4.0
         self.dt = 1.0/20.0
@@ -107,8 +107,6 @@ class PendulumEnv(gym.Env):
         self.m = 1.0
         self.l = 1.0
         self.setpoint = setpoint
-        # self.friction_coeff = friction_coeff
-        self.air_resistance_coeff = air_resistance_coeff
         self.wind_gust = GustOfWind(
             mean_force=0.0, max_force=0.0, gust_duration=1, gust_interval=5)  # Feel free to tune these parameters
         self.t = 0.0
@@ -139,9 +137,7 @@ class PendulumEnv(gym.Env):
         m = self.m
         l = self.l
         dt = self.dt
-        # friction_coeff = self.friction_coeff
-        air_resistance_coeff = self.air_resistance_coeff
-        wind_force = self.wind_gust.get_wind_force(self.t)
+        # wind_force = self.wind_gust.get_wind_force(self.t) # TODO: Add flag to enable/disable this if there is time
         static_friction_coeff = self.static_friction_coeff
         kinetic_friction_coeff = self.kinetic_friction_coeff
 
@@ -151,13 +147,13 @@ class PendulumEnv(gym.Env):
         torque_rw = (1.0 - np.abs(u)/self.max_torque)
 
         # Determine whether to apply static or kinetic friction
-        friction_coeff = static_friction_coeff if np.abs(thdot) < 1e-6 else kinetic_friction_coeff
+        friction_coeff = static_friction_coeff if np.abs(
+            thdot) < 1e-6 else kinetic_friction_coeff
         # TODO: Look up some other oscillating spring w/ friction example
 
         # This is the integrated dynamics of the pendulum in physics.
         # we need to write a tensorflow version of this
-        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) + 3.0 / (m * l**2) * u - friction_coeff *
-                            thdot - air_resistance_coeff * thdot**2 + wind_force * np.cos(th)) * dt
+        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) + 3.0 / (m * l**2) * u - friction_coeff * thdot)
         newthdot = np.clip(newthdot, -self.max_speed, self.max_speed)
         newth = th + newthdot * dt
 
