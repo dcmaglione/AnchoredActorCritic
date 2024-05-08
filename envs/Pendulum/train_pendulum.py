@@ -6,7 +6,8 @@ import Pendulum
 pendulum_serializer = lambda: args_utils.Arg_Serializer.join(args_utils.Arg_Serializer(
     abbrev_to_args= {
         'setpoint': args_utils.Serialized_Argument(name='--setpoint', type=float, default=0.0, help='setpoint'),
-            'g': args_utils.Serialized_Argument(name='--gravity', type=float, default=15.0, help='gravity')
+        'g': args_utils.Serialized_Argument(name='--gravity', type=float, default=15.0, help='gravity'),
+        'f': args_utils.Serialized_Argument(name='--friction', type=bool, default=False, help='friction')    
     }), args_utils.default_serializer(epochs=20, learning_rate=1e-3))
 
 def train(cmd_args, serializer):
@@ -33,7 +34,7 @@ def train(cmd_args, serializer):
         train_steps=30,
     )
     generated_params = train_utils.create_train_folder_and_params("Pendulum-custom", hp, cmd_args, serializer)
-    env_fn = lambda: Pendulum.PendulumEnv(g=cmd_args.gravity, setpoint=cmd_args.setpoint)
+    env_fn = lambda: Pendulum.PendulumEnv(g=cmd_args.gravity, setpoint=cmd_args.setpoint, f=cmd_args.friction)
     ddpg(env_fn, **generated_params)
 
 if __name__ == '__main__':
