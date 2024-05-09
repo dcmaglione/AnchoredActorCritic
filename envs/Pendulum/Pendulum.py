@@ -106,7 +106,7 @@ class PendulumEnv(gym.Env):
         self.g = g
         self.m = 1.0
         self.l = 1.0
-        self.f = False
+        self.f = f
         self.setpoint = setpoint
 
         self.static_friction_coeff = static_friction_coeff
@@ -137,6 +137,9 @@ class PendulumEnv(gym.Env):
         m = self.m
         l = self.l
         dt = self.dt
+        f = self.f
+        sfc = self.static_friction_coeff
+        kfc = self.kinetic_friction_coeff
 
         # TODO: Add flag to enable/disable this if there is time
         # wind_force = self.wind_gust.get_wind_force(self.t)
@@ -149,22 +152,22 @@ class PendulumEnv(gym.Env):
         effective_torque = u
         friction_force = 0
 
-        if self.f:
+        if f:
             # Apply static and kinetic friction based on angular velocity and user flag
             if np.abs(thdot) < 1e-3: # nearly stationary
-                friction_force = self.static_friction_coeff * m * g
+                friction_force = sfc * m * g
                 # Prevent motion if the friction force exceeds the applied torque
                 if np.abs(u) < friction_force:
                     effective_torque = 0
                 else:
                     effective_torque = u - np.sign(u) * friction_force
             else:
-                friction_force = self.kinetic_friction_coeff * np.sign(thdot) * m * g
+                friction_force = kfc * np.sign(thdot) * m * g
                 effective_torque = u - friction_force
 
         # Dynamics of the pendulum with friction considered
         newthdot = thdot + (3 * g / (2 * l) * np.sin(th) + 3.0 / (m * l**2) * effective_torque)
-        if self.f:
+        if f:
             newthdot -= friction_force * np.sign(thdot) # Apply kinetic friction directly in dynamics
         newthdot = np.clip(newthdot, -self.max_speed, self.max_speed) # limiting angular speed
         newth = th + newthdot * dt
