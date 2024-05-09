@@ -138,31 +138,45 @@ class PendulumEnv(gym.Env):
         l = self.l
         dt = self.dt
 
-        # wind_force = self.wind_gust.get_wind_force(self.t) # TODO: Add flag to enable/disable this if there is time
+        # TODO: Add flag to enable/disable this if there is time
+        # wind_force = self.wind_gust.get_wind_force(self.t)
 
         u = np.clip(u, -self.max_torque, self.max_torque)[0]
         self.last_u = u  # for rendering
         angle_rw = (1.0 - normed_angular_distance(th, self.setpoint))
         torque_rw = (1.0 - np.abs(u)/self.max_torque)
 
-        # Determine whether to apply static or kinetic friction
-        if self.f:
-            friction_coeff = self.static_friction_coeff if np.abs(thdot) < 1e-6 else self.kinetic_friction_coeff
-        else:
-            friction_coeff = 0.0
-        # TODO: Look up some other oscillating spring w/ friction example ^^^
+        effective_torque = u
+        friction_force = 0
 
-        # This is the integrated dynamics of the pendulum in physics.
-        # we need to write a tensorflow version of this
-        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) + 3.0 / (m * l**2) * u - friction_coeff * thdot)
-        newthdot = np.clip(newthdot, -self.max_speed, self.max_speed)
+        if self.f:
+            # Apply static and kinetic friction based on angular velocity and user flag
+            if np.abs(thdot) < 1e-3: # nearly stationary
+                friction_force = self.static_friction_coeff * m * g
+                # Prevent motion if the friction force exceeds the applied torque
+                if np.abs(u) < friction_force:
+                    effective_torque = 0
+                else:
+                    effective_torque = u - np.sign(u) * friction_force
+            else:
+                friction_force = self.kinetic_friction_coeff * np.sign(thdot) * m * g
+                effective_torque = u - friction_force
+
+        # Dynamics of the pendulum with friction considered
+        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) + 3.0 / (m * l**2) * effective_torque)
+        if self.f:
+            newthdot -= friction_force * np.sign(thdot) # Apply kinetic friction directly in dynamics
+        newthdot = np.clip(newthdot, -self.max_speed, self.max_speed) # limiting angular speed
         newth = th + newthdot * dt
 
         self.state = np.array([newth, newthdot])
 
         if self.render_mode == "human":
             self.render()
-        return self._get_obs(), (torque_rw*angle_rw)**0.5, False, False, {}
+
+        # Compute reward, combining angle reward with torque penalty
+        reward = (angle_rw * torque_rw)**0.5
+        return self._get_obs(), reward, False, False, {}
 
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
