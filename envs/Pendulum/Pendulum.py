@@ -147,7 +147,7 @@ class PendulumEnv(gym.Env):
         u = np.clip(u, -self.max_torque, self.max_torque)[0]
         self.last_u = u  # for rendering
         angle_rw = (1.0 - normed_angular_distance(th, self.setpoint))
-        torque_rw = (1.0 - np.abs(u)/self.max_torque)
+        torque_rw = (1.0 - np.abs(u)/self.max_torque)**0.2
 
         effective_torque = u
         friction_force = 0
@@ -166,7 +166,7 @@ class PendulumEnv(gym.Env):
                 effective_torque = u - friction_force
 
         # Dynamics of the pendulum with friction considered
-        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) + 3.0 / (m * l**2) * effective_torque)
+        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) + 3.0 / (m * l**2) * u) * effective_torque
         if f:
             newthdot -= friction_force * np.sign(thdot) # Apply kinetic friction directly in dynamics
         newthdot = np.clip(newthdot, -self.max_speed, self.max_speed) # limiting angular speed
