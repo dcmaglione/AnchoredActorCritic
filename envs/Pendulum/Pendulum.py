@@ -99,7 +99,7 @@ class PendulumEnv(gym.Env):
         "render_fps": 60,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, g=10.0, screen=None, setpoint=0.0, f=False, static_friction_coeff=0.5, kinetic_friction_coeff=0.3):
+    def __init__(self, render_mode: Optional[str] = None, g=10.0, screen=None, setpoint=0.0, f=False, p=False, static_friction_coeff=0.5, kinetic_friction_coeff=0.3):
         self.max_speed = 8
         self.max_torque = 4.0
         self.dt = 1.0/20.0
@@ -107,6 +107,7 @@ class PendulumEnv(gym.Env):
         self.m = 1.0
         self.l = 1.0
         self.f = f
+        self.p = p
         self.setpoint = setpoint
 
         self.static_friction_coeff = static_friction_coeff
@@ -119,6 +120,14 @@ class PendulumEnv(gym.Env):
         self.screen = screen
         self.clock = None
         self.isopen = True
+
+        # Initialize PID parameters
+        # TODO: Tune these parameters
+        self.Kp = 1.0
+        self.Ki = 0.1
+        self.Kd = 0.05
+        self.integral = 0.0
+        self.last_error = 0.0
 
         high = np.array([1.0, 1.0, self.max_speed], dtype=np.float32)
         # This will throw a warning in tests/envs/test_envs in utils/env_checker.py as the space is not symmetric
@@ -137,14 +146,17 @@ class PendulumEnv(gym.Env):
         m = self.m
         l = self.l
         dt = self.dt
-        f = self.f
         sfc = self.static_friction_coeff
         kfc = self.kinetic_friction_coeff
 
         # TODO: Add flag to enable/disable this if there is time
         # wind_force = self.wind_gust.get_wind_force(self.t)
 
-        u = np.clip(u, -self.max_torque, self.max_torque)[0]
+        if self.p:  # If the p flag is set, use the PID controller
+            u = pid_controller(th, thdot)
+        else:
+            u = np.clip(u, -self.max_torque, self.max_torque)[0]
+
         self.last_u = u  # for rendering
         angle_rw = (1.0 - normed_angular_distance(th, self.setpoint))
         torque_rw = (1.0 - np.abs(u)/self.max_torque)**0.2
@@ -152,24 +164,21 @@ class PendulumEnv(gym.Env):
         effective_torque = u
         friction_force = 0
 
-        if f:
+        if self.f:
             # Apply static and kinetic friction based on angular velocity and user flag
-            if np.abs(thdot) < 1e-3: # nearly stationary
+            if np.allclose(th, self.setpoint, atol=1e-3):  # nearly stationary
                 friction_force = sfc * m * g
                 # Prevent motion if the friction force exceeds the applied torque
-                if np.abs(u) < friction_force:
-                    effective_torque = 0
-                else:
-                    effective_torque = u - np.sign(u) * friction_force
+                effective_torque = u - np.sign(u) * min(np.abs(u), friction_force)
             else:
                 friction_force = kfc * np.sign(thdot) * m * g
                 effective_torque = u - friction_force
 
         # Dynamics of the pendulum with friction considered
-        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) + 3.0 / (m * l**2) * u) * effective_torque
-        if f:
-            newthdot -= friction_force * np.sign(thdot) # Apply kinetic friction directly in dynamics
-        newthdot = np.clip(newthdot, -self.max_speed, self.max_speed) # limiting angular speed
+        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) + 3.0 / (m * l**2) * effective_torque)
+        if self.f:
+            newthdot -= friction_force * np.sign(thdot)  # Apply kinetic friction directly in dynamics
+        newthdot = np.clip(newthdot, -self.max_speed, self.max_speed)  # limiting angular speed
         newth = th + newthdot * dt
 
         self.state = np.array([newth, newthdot])
@@ -322,3 +331,17 @@ class PendulumEnv(gym.Env):
 def normed_angular_distance(a, b):
     diff = (b - a + np.pi) % (2 * np.pi) - np.pi
     return np.abs(diff + 2*np.pi if diff < -np.pi else diff)/np.pi
+
+# * New PID function added to try and mimic behavior of the agent
+def pid_controller(self, theta, theta_dot):
+    error = theta - self.setpoint  # Proportional error
+    self.integral += error * self.dt  # Integral error
+    derivative = theta_dot  # Derivative term is the angular velocity
+    
+    # ! In some implementations of PID controllers, the derivative term can be calculated using the angular velocity instead of the error derivative.
+    # derivative = (error - self.last_error) / self.dt  # Derivative error
+
+    # PID output
+    u = -(self.Kp * error + self.Ki * self.integral + self.Kd * derivative)
+    self.last_error = error
+    return np.clip(np.array([u], dtype=np.float32), -self.max_torque, self.max_torque)
