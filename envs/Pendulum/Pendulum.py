@@ -99,7 +99,7 @@ class PendulumEnv(gym.Env):
         "render_fps": 60,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, g=10.0, screen=None, setpoint=0.0, f=False, p=False, static_friction_coeff=0.5, kinetic_friction_coeff=0.3):
+    def __init__(self, render_mode: Optional[str] = None, g=10.0, screen=None, setpoint=0.0, f=False, pid=False, static_friction_coeff=0.5, kinetic_friction_coeff=0.3):
         self.max_speed = 8
         self.max_torque = 4.0
         self.dt = 1.0/20.0
@@ -107,7 +107,7 @@ class PendulumEnv(gym.Env):
         self.m = 1.0
         self.l = 1.0
         self.f = f
-        self.p = p
+        self.pid = pid
         self.setpoint = setpoint
 
         self.static_friction_coeff = static_friction_coeff
@@ -138,6 +138,20 @@ class PendulumEnv(gym.Env):
         )
         self.observation_space = spaces.Box(
             low=-high, high=high, dtype=np.float32)
+        
+    # * New PID function added to try and mimic behavior of the agent
+    def pid_controller(self, theta, theta_dot):
+        error = theta - self.setpoint  # Proportional error
+        self.integral += error * self.dt  # Integral error
+        derivative = theta_dot  # Derivative term is the angular velocity
+        
+        # ! In some implementations of PID controllers, the derivative term can be calculated using the angular velocity instead of the error derivative.
+        # derivative = (error - self.last_error) / self.dt  # Derivative error
+
+        # PID output
+        u = -(self.Kp * error + self.Ki * self.integral + self.Kd * derivative)
+        self.last_error = error
+        return np.clip(u, -self.max_torque, self.max_torque)
 
     def step(self, u):
         th, thdot = self.state  # th := theta
@@ -152,8 +166,8 @@ class PendulumEnv(gym.Env):
         # TODO: Add flag to enable/disable this if there is time
         # wind_force = self.wind_gust.get_wind_force(self.t)
 
-        if self.p:  # If the p flag is set, use the PID controller
-            u = pid_controller(th, thdot)
+        if self.pid:  # If the p flag is set, use the PID controller
+            u = self.pid_controller(th, thdot)
         else:
             u = np.clip(u, -self.max_torque, self.max_torque)[0]
 
@@ -331,17 +345,3 @@ class PendulumEnv(gym.Env):
 def normed_angular_distance(a, b):
     diff = (b - a + np.pi) % (2 * np.pi) - np.pi
     return np.abs(diff + 2*np.pi if diff < -np.pi else diff)/np.pi
-
-# * New PID function added to try and mimic behavior of the agent
-def pid_controller(self, theta, theta_dot):
-    error = theta - self.setpoint  # Proportional error
-    self.integral += error * self.dt  # Integral error
-    derivative = theta_dot  # Derivative term is the angular velocity
-    
-    # ! In some implementations of PID controllers, the derivative term can be calculated using the angular velocity instead of the error derivative.
-    # derivative = (error - self.last_error) / self.dt  # Derivative error
-
-    # PID output
-    u = -(self.Kp * error + self.Ki * self.integral + self.Kd * derivative)
-    self.last_error = error
-    return np.clip(np.array([u], dtype=np.float32), -self.max_torque, self.max_torque)

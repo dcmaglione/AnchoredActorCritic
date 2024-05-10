@@ -8,7 +8,7 @@ pendulum_serializer = lambda: args_utils.Arg_Serializer.join(args_utils.Arg_Seri
         'setpoint': args_utils.Serialized_Argument(name='--setpoint', type=float, default=0.0, help='setpoint'),
         'g': args_utils.Serialized_Argument(name='--gravity', type=float, default=15.0, help='gravity'),
         'f': args_utils.Serialized_Argument(name='--friction', type=bool, default=False, help='friction'),
-        'p': args_utils.Serialized_Argument(name='--pid', type=bool, default=False, help='pid')
+        'pid': args_utils.Serialized_Argument(name='--pid', type=bool, default=False, help='pid')
     }), args_utils.default_serializer(epochs=20, learning_rate=1e-3))
 
 def train(cmd_args, serializer):
@@ -29,7 +29,7 @@ def train(cmd_args, serializer):
         q_lr=cmd_args.learning_rate,
         batch_size=200,
         act_noise=0.05,
-        max_ep_len=200,
+        max_ep_len=400,
         epochs=cmd_args.epochs,
         train_every=50,
         train_steps=30,
