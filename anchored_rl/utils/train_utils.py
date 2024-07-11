@@ -13,8 +13,7 @@ def create_train_folder_and_params(experiment_name, hyperparams, cmd_args, seria
     generated_params = {
         "hp": hyperparams,
         "on_save": partial(save_utils.on_save, replay_save=cmd_args.replay_save, save_path=save_path),
-        "logger_kwargs": {"output_dir": save_path},
-        "extra_hyperparameters": vars(cmd_args)
+        "logger_kwargs": {"output_dir": save_path}
     }
     if cmd_args.prev_folder:
         def existing_actor_critic(*args, **kwargs):

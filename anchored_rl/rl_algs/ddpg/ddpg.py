@@ -85,7 +85,7 @@ class HyperParams:
 Deep Deterministic Policy Gradient (DDPG)
 
 """
-def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_critic=core.mlp_actor_critic, logger_kwargs=dict(), save_freq=1, on_save=lambda *_:(), anchored=(None, None), extra_hyperparameters: dict[str, object]={}):
+def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_critic=core.mlp_actor_critic, logger_kwargs=dict(), save_freq=1, on_save=lambda *_:(), anchored=(None, None)):
     """
 
     Args:
@@ -340,7 +340,7 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
         # Ignore the "done" signal if it comes from hitting the time
         # horizon (that is, when it's an artificial terminal signal
         # that isn't based on the agent's state)
-        d = False if ep_len==hp.max_ep_len else d
+        # d = False if  els d
 
         # Store experience to replay buffer
         replay_buffer.store(o, a, r, o2, d)

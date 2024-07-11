@@ -357,7 +357,7 @@ class EpochLogger(Logger):
 class TensorflowLogger(EpochLogger):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.train_summary_writer = tf.summary.create_file_writer("logs")
+        self.train_summary_writer = tf.summary.create_file_writer(str(kwargs["output_dir"].parent))
 
     def dump_tabular(self, step):
         with self.train_summary_writer.as_default():

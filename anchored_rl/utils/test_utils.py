@@ -1,5 +1,5 @@
 from pathlib import Path
-from anchored_rl.utils import save_utils
+from anchored_rl.utils import save_utils, loss_composition
 import numpy as np
 
 def test(actor, env, seed=123, render=True, num_steps=100):
@@ -8,7 +8,6 @@ def test(actor, env, seed=123, render=True, num_steps=100):
     low = env.action_space.low
     os = []
     rs = []
-    sumr = 0.0;
     for _ in range(num_steps):
         o, r, d, _, i, = env.step(actor(o)*(high - low)/2.0 + (high + low)/2.0)
         if d:
@@ -17,18 +16,17 @@ def test(actor, env, seed=123, render=True, num_steps=100):
         rs.append(r)
         if render:
             env.render()
-        sumr+=r
-    print("reward sum:", sumr)
+    print("reward sum:", np.sum(rs))
     return np.array(os), np.array(rs)
 
-def folder_to_results(env, render, num_tests, folder_path, steps=100,  **kwargs):
+def folder_to_episode_rewards(env, render, num_tests, folder_path, steps=100,  **kwargs):
     import tensorflow as tf
     saved = tf.saved_model.load(str(Path(folder_path, "actor")))
     def actor(x):
         # print(np.array([x], dtype=np.float32))
         return saved(np.array([x], dtype=np.float32))[0]
-    runs = np.array(list(map(lambda i: test(actor, env, seed=17+i,
-                    render=render, num_steps=steps)[1], range(num_tests))))
+    runs = list(map(lambda i: test(actor, env, seed=17+i,
+                    render=render, num_steps=steps)[1], range(num_tests)))
     return runs
 
 def run_tests(env, cmd_args):
@@ -40,10 +38,16 @@ def run_tests(env, cmd_args):
     print("################################")
     print("################################")
     print("################################")
+    means = []
     for folder in folders:
         print("using folder:", folder)
+        episode_rewards = [np.sum(rewards) for rewards in folder_to_episode_rewards(env, folder_path=folder, **vars(cmd_args))]
+        mean_reward = np.mean(episode_rewards)
+        means.append(mean_reward)
+        std = np.std(episode_rewards)
+        print(f"{mean_reward:.4f}+-{std:.4f}")
+        print(f"geomean: {loss_composition.geo(episode_rewards):.4f}")
     print("################################")
     print("################################")
     print("################################")
-    runs = [np.mean(folder_to_results(env, folder_path=folder, **vars(cmd_args))) for folder in folders]
-    return runs
+    print(f"{np.mean(means):.4f}+-{np.std(means):.4f}")
