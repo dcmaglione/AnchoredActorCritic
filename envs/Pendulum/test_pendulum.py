@@ -1,4 +1,4 @@
-from . import Pendulum
+from .Pendulum import PendulumEnv
 import argparse
 from anchored_rl.utils import test_utils
 
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     # import matplotlib.pyplot as plt
     cmd_args = parse_args()
     test_utils.run_tests(
-        Pendulum.PendulumEnv(
+        PendulumEnv(
             render_mode="human" if cmd_args.render else None,
             g=cmd_args.gravity,
             setpoint=cmd_args.setpoint

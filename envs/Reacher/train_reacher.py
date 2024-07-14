@@ -1,7 +1,7 @@
 from anchored_rl.rl_algs.ddpg.ddpg import ddpg, HyperParams
 from anchored_rl.utils import args_utils
 from anchored_rl.utils import train_utils
-from . import reacher
+from .reacher import ReacherEnv
 
 reacher_serializer = lambda: args_utils.Arg_Serializer.join(args_utils.Arg_Serializer(
     abbrev_to_args= {
@@ -34,7 +34,7 @@ def train(cmd_args, serializer):
         train_steps=30,
     )
     generated_params = train_utils.create_train_folder_and_params("Reacher-custom", hp, cmd_args, serializer)
-    env_fn = lambda: reacher.ReacherEnv(goal_distance=cmd_args.distance, bias=cmd_args.bias)
+    env_fn = lambda: ReacherEnv(goal_distance=cmd_args.distance, bias=cmd_args.bias)
     ddpg(env_fn, **generated_params)
 
 if __name__ == '__main__':

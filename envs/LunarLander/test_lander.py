@@ -1,5 +1,5 @@
 import argparse
-from . import lunar_lander
+from .lunar_lander import LunarLander
 from anchored_rl.utils import test_utils
 
 def parse_args(args=None):
@@ -16,7 +16,7 @@ def parse_args(args=None):
 if __name__ == "__main__":
     # import matplotlib.pyplot as plt
     cmd_args = parse_args()
-    test_utils.run_tests(lunar_lander.LunarLander(enable_wind=cmd_args.wind, render_mode="human" if cmd_args.render else None), cmd_args)
+    test_utils.run_tests(LunarLander(enable_wind=cmd_args.wind, render_mode="human" if cmd_args.render else None), cmd_args)
 
 # lander after 200 epochs with wind trained with wind
 # 55.5706+-18.6731

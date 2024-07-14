@@ -1,7 +1,7 @@
 from anchored_rl.rl_algs.ddpg.ddpg import ddpg, HyperParams
 from anchored_rl.utils import args_utils
 from anchored_rl.utils import train_utils
-from . import lunar_lander
+from .lunar_lander import LunarLander
 import tensorflow as tf
 
 class WithStrPolyDecay(tf.optimizers.schedules.PolynomialDecay):
@@ -30,7 +30,7 @@ def lander_serializer(
 
 def train(cmd_args, hp, serializer):
     generated_params = train_utils.create_train_folder_and_params("lander-custom", hp, cmd_args, serializer)
-    env_fn = lambda: lunar_lander.LunarLander(enable_wind=cmd_args.wind)
+    env_fn = lambda: LunarLander(enable_wind=cmd_args.wind)
     ddpg(env_fn, save_freq=1, **generated_params)
 
 def generate_hypers(cmd_args):
@@ -40,7 +40,7 @@ def generate_hypers(cmd_args):
         ac_kwargs={
             "actor_hidden_sizes": (64, 64),
             "critic_hidden_sizes": (128, 128, 128),
-            "obs_normalizer": lunar_lander.LunarLander().observation_space.high
+            "obs_normalizer": LunarLander().observation_space.high
         },
         start_steps=10000,
         replay_size=int(1e6),
