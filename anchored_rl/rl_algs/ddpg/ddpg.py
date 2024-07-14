@@ -2,15 +2,12 @@ from dataclasses import asdict, dataclass
 from typing import Any, Callable, Dict, NamedTuple
 import numpy as np
 import tensorflow as tf
-import pickle
+import keras
 import gymnasium as gym
 import time
 from anchored_rl.rl_algs.ddpg import core
 from anchored_rl.utils.logx import TensorflowLogger
 from anchored_rl.utils.loss_composition import p_mean, scale_gradient, move_toward_zero
-from anchored_rl.utils import args_utils
-from anchored_rl.utils import save_utils
-from functools import partial
 
 #adapted from https://github.com/tanzhenyu/spinup-tf2/blob/master/spinup/algos/ddpg/ddpg.py
 
@@ -171,16 +168,16 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
     with tf.name_scope('main'):
         pi_network, q_network = actor_critic(env.observation_space, env.action_space, **hp.ac_kwargs)
         if anchor_q:
-            anchor_targ_network = tf.keras.models.clone_model(anchor_q)
+            anchor_targ_network = keras.models.clone_model(anchor_q)
         
         # before_tanh_output = pi_network.layers[-1].output
         print(pi_network.output)
         print(pi_network.layers[-2].output)
         print(pi_network.input)
-        pi_and_before_tanh = tf.keras.Model(
+        pi_and_before_tanh = keras.Model(
             pi_network.input, {"pi": pi_network.output, "before_tanh": pi_network.layers[-2].output})
         pi_and_before_tanh.compile()
-        # q_and_before_sigmoid = tf.keras.Model(
+        # q_and_before_sigmoid = keras.Model(
         #     q_network.input, {"q": q_network.output, "before_sigmoid": q_network.layers[-2].output})
     
     # Target networks
@@ -198,10 +195,10 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
     # Experience buffer
     replay_buffer = ReplayBuffer(obs_dim=obs_dim, act_dim=act_dim, size=hp.replay_size)
     # Separate train ops for pi, q
-    pi_optimizer = tf.keras.optimizers.Adam(learning_rate=hp.pi_lr)
-    q_optimizer = tf.keras.optimizers.Adam(learning_rate=hp.q_lr)
+    pi_optimizer = keras.optimizers.Adam(learning_rate=hp.pi_lr)
+    q_optimizer = keras.optimizers.Adam(learning_rate=hp.q_lr)
     if anchor_q:
-        anchor_q_optimizer = tf.keras.optimizers.Adam(learning_rate=hp.q_lr)
+        anchor_q_optimizer = keras.optimizers.Adam(learning_rate=hp.q_lr)
 
     # Polyak averaging for target variables
     @tf.function

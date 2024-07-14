@@ -1,13 +1,10 @@
-import argparse
 import json
 import os
-import time
-from tensorflow.keras import models, Model
+from keras import models, Model
 import pickle
-from anchored_rl.utils.args_utils import Arg_Serializer, Serialized_Argument
+from anchored_rl.utils.args_utils import Arg_Serializer
 from pathlib import Path
 from anchored_rl.utils.serialization_utils import ExtraTypesEncoder
-from functools import partial
 
 
 def save_hypers(experiment_name, hypers, cmd_args, serializer:Arg_Serializer):
@@ -52,17 +49,19 @@ def concatenate_lists(list_of_lists):
 
 
 def on_save(actor: Model, q_network: Model, epoch:int, replay_buffer, replay_save:bool, save_path:str):
-    actor.save(Path(save_path, str(epoch), "actor"))
-    q_network.save(Path(save_path, str(epoch), "critic"))
+    os.makedirs(Path(save_path, str(epoch)), exist_ok=True)
+    print("saving at", Path(save_path, str(epoch)))
+    actor.save(Path(save_path, str(epoch), "actor.keras"))
+    q_network.save(Path(save_path, str(epoch), "critic.keras"))
     if replay_save:
         with open( Path(save_path, "replay.p"), "wb" ) as replay_file:
             pickle.dump( replay_buffer, replay_file)
 
 def load_critic(folder):
-    return models.load_model(Path(folder, "critic"))
+    return models.load_model(Path(folder, "critic.keras"))
 
 def load_actor(folder):
-    return models.load_model(Path(folder, "actor"))
+    return models.load_model(Path(folder, "actor.keras"))
 
 def load_replay(folder):
     return pickle.load(open(Path(folder, "replay.p"), "rb"))

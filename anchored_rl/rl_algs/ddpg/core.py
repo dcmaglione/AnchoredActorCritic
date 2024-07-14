@@ -1,8 +1,7 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras import Model
-from tensorflow.keras.layers import Dense, Input, Lambda, Activation
-import gymnasium as gym
+from keras import Model
+from keras.layers import Dense, Input, Lambda, Activation
 from gymnasium import spaces
 
 def mlp_functional(inputs, hidden_sizes=(32,), activation='relu', use_bias=True, output_activation="sigmoid"):
@@ -32,7 +31,7 @@ def unscale_by_space(unscale_me, space): #outputs [-0.5, 0.5]
 Actor-Critics
 """
 def actor(obs_space: spaces.Box, act_space: spaces.Box, hidden_sizes, obs_normalizer):
-    inputs = tf.keras.Input((obs_space.shape[0],))
+    inputs = Input((obs_space.shape[0],))
     normalized_input = Lambda(lambda t: t/obs_normalizer)(inputs)
     # unscaled = unscale_by_space(inputs, obs_space)
     linear_output = mlp_functional(normalized_input, hidden_sizes +(act_space.shape[0],),
@@ -41,13 +40,13 @@ def actor(obs_space: spaces.Box, act_space: spaces.Box, hidden_sizes, obs_normal
     # clipped = Lambda(lambda t: tf.clip_by_value(
     #     t, -1.0, 1.0))(normed)
     # scaled = scale_by_space(normed, act_space)
-    model = tf.keras.Model(inputs,tanhed)
+    model = Model(inputs,tanhed)
     model.compile()
     return model
 
 def critic(obs_space: spaces.Box, act_space: spaces.Box, hidden_sizes, obs_normalizer):
     concated_normalizer = np.concatenate([obs_normalizer, np.ones(act_space.shape[0])])
-    inputs = tf.keras.Input((obs_space.shape[0]+act_space.shape[0],))
+    inputs = Input((obs_space.shape[0]+act_space.shape[0],))
     normalized_input = Lambda(lambda t: t/concated_normalizer)(inputs)
     outputs = mlp_functional(normalized_input, hidden_sizes + (1,), output_activation=None)
     
@@ -56,7 +55,7 @@ def critic(obs_space: spaces.Box, act_space: spaces.Box, hidden_sizes, obs_norma
         lambda t: t*0.1 - 0.5, name="before_sigmoid")(outputs)
 
     biased_normed = Activation("sigmoid")(before_sigmoid)
-    model =tf.keras.Model(inputs, biased_normed) 
+    model =Model(inputs, biased_normed) 
     model.compile()
     return model
 

@@ -1,5 +1,5 @@
 import argparse
-import anchored_rl.envs.LunarLander.train_lander as train_lander
+from . import train_lander
 from anchored_rl.utils import args_utils
 from pathlib import Path
 

@@ -1,5 +1,5 @@
 import argparse
-import train_pendulum
+from . import train_pendulum
 from anchored_rl.utils import args_utils
 from pathlib import Path
 

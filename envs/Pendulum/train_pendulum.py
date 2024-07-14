@@ -1,7 +1,7 @@
 from anchored_rl.rl_algs.ddpg.ddpg import ddpg, HyperParams
 import anchored_rl.utils.train_utils as train_utils
 import anchored_rl.utils.args_utils as args_utils
-import Pendulum
+from . import Pendulum
 
 def pendulum_serializer():
     return args_utils.Arg_Serializer.join(args_utils.Arg_Serializer({

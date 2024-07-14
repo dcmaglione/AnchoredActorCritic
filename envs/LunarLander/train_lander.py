@@ -1,7 +1,7 @@
 from anchored_rl.rl_algs.ddpg.ddpg import ddpg, HyperParams
 from anchored_rl.utils import args_utils
 from anchored_rl.utils import train_utils
-import anchored_rl.envs.LunarLander.lunar_lander as lunar_lander
+from . import lunar_lander
 import tensorflow as tf
 
 class WithStrPolyDecay(tf.optimizers.schedules.PolynomialDecay):

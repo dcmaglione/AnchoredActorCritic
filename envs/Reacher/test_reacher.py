@@ -1,5 +1,5 @@
 import argparse
-from anchored_rl.envs.Reacher.reacher import ReacherEnv
+from . import reacher
 from anchored_rl.utils import test_utils
 
 def parse_args(args=None):
@@ -16,4 +16,4 @@ def parse_args(args=None):
 if __name__ == "__main__":
     # import matplotlib.pyplot as plt
     cmd_args = parse_args()
-    test_utils.run_tests(ReacherEnv(goal_distance=cmd_args.distance, bias=cmd_args.bias, render_mode="human" if cmd_args.render else None), cmd_args)
+    test_utils.run_tests(reacher.ReacherEnv(goal_distance=cmd_args.distance, bias=cmd_args.bias, render_mode="human" if cmd_args.render else None), cmd_args)

@@ -1,5 +1,5 @@
 import argparse
-import anchored_rl.envs.Reacher.train_reacher as train_reacher
+from . import train_reacher
 from anchored_rl.utils import args_utils
 from pathlib import Path
 
