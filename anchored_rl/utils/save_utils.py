@@ -37,7 +37,7 @@ def find_folders(dirname, name_to_find) -> list[str]:
 
 
 def find_all_train_paths(path):
-    return [Path(folder).parent for folder in find_folders(path, "actor")]
+    return [Path(folder) for folder in find_folders(path, "models")]
 
 
 def latest_train_folder(path):
@@ -49,10 +49,11 @@ def concatenate_lists(list_of_lists):
 
 
 def on_save(actor: Model, q_network: Model, epoch:int, replay_buffer, replay_save:bool, save_path:str):
-    os.makedirs(Path(save_path, str(epoch)), exist_ok=True)
-    print("saving at", Path(save_path, str(epoch)))
-    actor.save(Path(save_path, str(epoch), "actor.keras"))
-    q_network.save(Path(save_path, str(epoch), "critic.keras"))
+    path = Path(save_path, str(epoch), "models")
+    os.makedirs(path, exist_ok=True)
+    print("saving at", path)
+    actor.save(Path(path, "actor.keras"))
+    q_network.save(Path(path, "critic.keras"))
     if replay_save:
         with open( Path(save_path, "replay.p"), "wb" ) as replay_file:
             pickle.dump( replay_buffer, replay_file)

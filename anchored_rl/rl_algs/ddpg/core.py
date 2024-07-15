@@ -1,8 +1,17 @@
 import numpy as np
-import tensorflow as tf
+import keras
 from keras import Model
-from keras.layers import Dense, Input, Lambda, Activation
+from keras.layers import Dense, Input, Activation, Rescaling
 from gymnasium import spaces
+
+@keras.saving.register_keras_serializable(package="MyLayers")
+class RescalingFixed(Rescaling): # fixes an error while loading numpy arrays in Rescaling
+    def __init__(self, scale, offset=0.0, **kwargs):
+        if type(scale) is dict:
+            scale = np.array(scale['config']['value'])
+        if type(scale) is dict:
+            scale = np.array(scale['config']['value'])
+        super().__init__(scale, offset, **kwargs)
 
 def mlp_functional(inputs, hidden_sizes=(32,), activation='relu', use_bias=True, output_activation="sigmoid"):
     layer = inputs
@@ -32,7 +41,7 @@ Actor-Critics
 """
 def actor(obs_space: spaces.Box, act_space: spaces.Box, hidden_sizes, obs_normalizer):
     inputs = Input((obs_space.shape[0],))
-    normalized_input = Lambda(lambda t: t/obs_normalizer)(inputs)
+    normalized_input = RescalingFixed(1/obs_normalizer)(inputs)
     # unscaled = unscale_by_space(inputs, obs_space)
     linear_output = mlp_functional(normalized_input, hidden_sizes +(act_space.shape[0],),
         use_bias=True, output_activation=None, activation="relu")
@@ -47,13 +56,11 @@ def actor(obs_space: spaces.Box, act_space: spaces.Box, hidden_sizes, obs_normal
 def critic(obs_space: spaces.Box, act_space: spaces.Box, hidden_sizes, obs_normalizer):
     concated_normalizer = np.concatenate([obs_normalizer, np.ones(act_space.shape[0])])
     inputs = Input((obs_space.shape[0]+act_space.shape[0],))
-    normalized_input = Lambda(lambda t: t/concated_normalizer)(inputs)
+    normalized_input = RescalingFixed(1.0/concated_normalizer)(inputs)
     outputs = mlp_functional(normalized_input, hidden_sizes + (1,), output_activation=None)
     
     #name the layer before sigmoid
-    before_sigmoid = Lambda(
-        lambda t: t*0.1 - 0.5, name="before_sigmoid")(outputs)
-
+    before_sigmoid = RescalingFixed(0.1, offset=-0.5)(outputs)
     biased_normed = Activation("sigmoid")(before_sigmoid)
     model =Model(inputs, biased_normed) 
     model.compile()

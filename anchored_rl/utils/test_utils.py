@@ -1,4 +1,3 @@
-from pathlib import Path
 from anchored_rl.utils import save_utils, loss_composition
 import numpy as np
 
@@ -20,8 +19,7 @@ def test(actor, env, seed=123, render=True, num_steps=100):
     return np.array(os), np.array(rs)
 
 def folder_to_episode_rewards(env, render, num_tests, folder_path, steps=100, seed=123,  **kwargs):
-    import tensorflow as tf
-    saved = tf.saved_model.load(str(Path(folder_path, "actor")))
+    saved = save_utils.load_actor(folder_path)
     def actor(x):
         # print(np.array([x], dtype=np.float32))
         return saved(np.array([x], dtype=np.float32))[0]
