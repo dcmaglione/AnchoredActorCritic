@@ -25,7 +25,7 @@ def lander_serializer(
         abbrev_to_args= {
             'w': args_utils.Serialized_Argument(name='--wind', action="store_true", help='enable wind in env'),
             'steps': args_utils.Serialized_Argument(name='--steps-per-epoch', type=int, help="number of total steps in one epoch", default=steps_per_epoch)
-        }), args_utils.default_serializer(epochs, learning_rate))
+        }), args_utils.default_serializer(epochs, learning_rate, act_noise=0.01, start_steps=10000))
 
 
 def train(cmd_args, hp, serializer):
@@ -42,7 +42,7 @@ def generate_hypers(cmd_args):
             "critic_hidden_sizes": (128, 128, 128),
             "obs_normalizer": LunarLander().observation_space.high
         },
-        start_steps=10000,
+        start_steps=cmd_args.start_steps,
         replay_size=int(1e6),
         gamma=0.99,
         polyak=0.99,
@@ -51,7 +51,7 @@ def generate_hypers(cmd_args):
         pi_lr=cmd_args.learning_rate,
         q_lr=cmd_args.learning_rate,
         batch_size=32,
-        act_noise=0.01,
+        act_noise=cmd_args.act_noise,
         max_ep_len=200,
         epochs=cmd_args.epochs,
         train_every=50,

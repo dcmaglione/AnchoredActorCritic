@@ -82,7 +82,7 @@ class HyperParams:
 Deep Deterministic Policy Gradient (DDPG)
 
 """
-def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_critic=core.mlp_actor_critic, logger_kwargs=dict(), save_freq=1, on_save=lambda *_:(), anchored=(None, None)):
+def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_critic=core.mlp_actor_critic, logger_kwargs=dict(), save_freq=1, on_save=lambda *_:(), anchored=lambda: (None, None), random_start=True):
     """
 
     Args:
@@ -150,7 +150,7 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
             the current policy and value function.
 
     """
-    anchor_q, anchor_replay = anchored
+    anchor_q, anchor_replay = anchored()
     logger = TensorflowLogger(**logger_kwargs)
     # logger.save_config({"hyperparams": hp.__dict__, "extra_hyperparams": extra_hyperparameters})
 
@@ -169,13 +169,9 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
         pi_network, q_network = actor_critic(env.observation_space, env.action_space, **hp.ac_kwargs)
         if anchor_q:
             anchor_targ_network = keras.models.clone_model(anchor_q)
-        
-        # before_tanh_output = pi_network.layers[-1].output
-        print(pi_network.output)
-        print(pi_network.layers[-2].output)
-        print(pi_network.input)
+
         pi_and_before_tanh = keras.Model(
-            pi_network.input, {"pi": pi_network.output, "before_tanh": pi_network.layers[-2].output})
+            pi_network.input, {"pi": pi_network.layers[-1].output, "before_tanh": pi_network.layers[-2].output})
         pi_and_before_tanh.compile()
         # q_and_before_sigmoid = keras.Model(
         #     q_network.input, {"q": q_network.output, "before_sigmoid": q_network.layers[-2].output})
@@ -244,11 +240,14 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
         return q_loss, q
 
 
-    @tf.function
+    # @tf.function
     def pi_update(obs1, obs2, anchor_obs1, anchor_ac1, debug=False):
         with tf.GradientTape() as tape:
             outputs = pi_and_before_tanh(obs1)
             pi = outputs['pi']
+            # pi_and_before_tanh.summary()
+            # tf.print(tf.shape(obs1))
+            # tf.print(tf.shape(pi))
             before_tanh = outputs['before_tanh']
             before_tanh_c =  1.0 - tf.reduce_mean(tf.reshape(1.0 - move_toward_zero(before_tanh), [1, -1])**2.0)
             # q_c = tf.stack(
@@ -267,7 +266,7 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
             # reg_c = tf.squeeze(p_mean(tf.stack([spatial_c, temporal_c, before_tanh_c],axis=1), 0.0))
             # all_c = p_mean(tf.stack([scale_gradient(tf.squeeze(aq_c), 3e2), tf.squeeze(before_tanh_c)]), p=0.0)
             # all_c = scale_gradient(aq_c,0.0)
-            all_c = p_mean(tf.stack([scale_gradient(tf.squeeze(q_c), 3e2), scale_gradient(tf.squeeze(before_tanh_c),0.1)]), p=0.0)
+            all_c = p_mean(tf.stack([scale_gradient(tf.squeeze(q_c), 3e2), scale_gradient(tf.squeeze(before_tanh_c),0.2)]), p=0.0)
             # all_c = p_mean(tf.stack([ scale_gradient(aq_c, 3e2), scale_gradient(q_c, 3e2)], axis=1), 0.0)
             # all_c = q_c + 0.008*pi_diffs_c + 0.005*pi_bar_c + 0.025*center_c
             # if debug:
@@ -325,10 +324,10 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
         from a uniform distribution for better exploration. Afterwards, 
         use the learned policy (with some noise, via act_noise). 
         """
-        if t > hp.start_steps:
-            a = get_action(o, hp.act_noise*(total_steps - t)/total_steps)
-        else:
+        if t < hp.start_steps and random_start:
             a = env.action_space.sample()
+        else:
+            a = get_action(o, hp.act_noise*(total_steps - t)/total_steps)
 
         # Step the env
         o2, r, d, _, _ = env.step(a)

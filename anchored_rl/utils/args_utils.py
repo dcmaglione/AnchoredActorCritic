@@ -36,7 +36,6 @@ class Arg_Serializer:
 
     @staticmethod
     def join(*serializers: Optional["Arg_Serializer"]):
-        print("WTF")
         def join_two(as1: Arg_Serializer, as2: Arg_Serializer) -> Arg_Serializer:
             overlapping_names = as1.name_to_abbrev.keys() & as2.name_to_abbrev.keys()
             overlapping_abbrevs = as1.abbrev_to_args.keys() & as2.abbrev_to_args.keys()
@@ -72,13 +71,14 @@ class Arg_Serializer:
         return f"Arg_Serializer({self.abbrev_to_args})"
 
 
-def rl_alg_serializer(epochs=50, learning_rate=3e-3):
+def rl_alg_serializer(epochs=50, learning_rate=3e-3, start_steps=1000, act_noise=0.1):
     return Arg_Serializer(
         abbrev_to_args={
             'e': Serialized_Argument(name='--epochs', type=int, default=epochs, help='number of epochs'),
             's': Serialized_Argument(name='--seed', type=int, default=int(time.time() * 1e5) % int(1e6)),
             'l': Serialized_Argument(name='--learning_rate', type=float, default=learning_rate),
-            's_s': Serialized_Argument(name="--start_steps", type=int, default=1000),
+            's_s': Serialized_Argument(name="--start_steps", type=int, default=start_steps),
+            'a_n': Serialized_Argument(name="--act_noise", type=float, default=act_noise),
         },
         ignored={'save_path', 'seed'}
     )
@@ -94,10 +94,10 @@ def anchor_serializer():
     )
 
 
-def default_serializer(epochs=50, learning_rate=3e-3):
+def default_serializer(epochs=50, learning_rate=3e-3, start_steps=1000, act_noise=0.1):
     return Arg_Serializer.join(
         # ArgsSerializer({'n': Serialized_Argument(name='--experiment_name', type=str, required=True)}, ignored={'experiment_name'}),
-        rl_alg_serializer(epochs, learning_rate), anchor_serializer())
+        rl_alg_serializer(epochs, learning_rate, start_steps, act_noise), anchor_serializer())
 
 def parse_arguments(serializer:Arg_Serializer, args=None, parser = None):
     if parser is None:

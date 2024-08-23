@@ -51,7 +51,7 @@ def concatenate_lists(list_of_lists):
 def on_save(actor: Model, q_network: Model, epoch:int, replay_buffer, replay_save:bool, save_path:str):
     path = Path(save_path, str(epoch), "models")
     os.makedirs(path, exist_ok=True)
-    print("saving at", path)
+    print("saving at", path.parent)
     actor.save(Path(path, "actor.keras"))
     q_network.save(Path(path, "critic.keras"))
     if replay_save:
@@ -64,5 +64,5 @@ def load_critic(folder):
 def load_actor(folder):
     return models.load_model(Path(folder, "actor.keras"))
 
-def load_replay(folder):
-    return pickle.load(open(Path(folder, "replay.p"), "rb"))
+def load_replay(folder: str):
+    return pickle.load(open(Path(folder).parent / "replay.p", "rb"))

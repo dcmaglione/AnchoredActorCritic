@@ -9,8 +9,8 @@ class RescalingFixed(Rescaling): # fixes an error while loading numpy arrays in 
     def __init__(self, scale, offset=0.0, **kwargs):
         if type(scale) is dict:
             scale = np.array(scale['config']['value'])
-        if type(scale) is dict:
-            scale = np.array(scale['config']['value'])
+        if type(offset) is dict:
+            offset = np.array(offset['config']['value'])
         super().__init__(scale, offset, **kwargs)
 
 def mlp_functional(inputs, hidden_sizes=(32,), activation='relu', use_bias=True, output_activation="sigmoid"):
@@ -41,7 +41,7 @@ Actor-Critics
 """
 def actor(obs_space: spaces.Box, act_space: spaces.Box, hidden_sizes, obs_normalizer):
     inputs = Input((obs_space.shape[0],))
-    normalized_input = RescalingFixed(1/obs_normalizer)(inputs)
+    normalized_input = RescalingFixed(1.0/obs_normalizer)(inputs)
     # unscaled = unscale_by_space(inputs, obs_space)
     linear_output = mlp_functional(normalized_input, hidden_sizes +(act_space.shape[0],),
         use_bias=True, output_activation=None, activation="relu")
@@ -60,7 +60,7 @@ def critic(obs_space: spaces.Box, act_space: spaces.Box, hidden_sizes, obs_norma
     outputs = mlp_functional(normalized_input, hidden_sizes + (1,), output_activation=None)
     
     #name the layer before sigmoid
-    before_sigmoid = RescalingFixed(0.1, offset=-0.5)(outputs)
+    before_sigmoid = RescalingFixed(0.1, offset=-0.5, name="before_sigmoid")(outputs)
     biased_normed = Activation("sigmoid")(before_sigmoid)
     model =Model(inputs, biased_normed) 
     model.compile()

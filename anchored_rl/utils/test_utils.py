@@ -1,7 +1,7 @@
 from anchored_rl.utils import save_utils, loss_composition
 import numpy as np
 
-def test(actor, env, seed=123, render=True, num_steps=100):
+def test(actor, env, seed=123, render=True, num_steps=400):
     o,i = env.reset(seed=seed)
     high = env.action_space.high
     low = env.action_space.low
@@ -18,7 +18,7 @@ def test(actor, env, seed=123, render=True, num_steps=100):
     print("reward sum:", np.sum(rs))
     return np.array(os), np.array(rs)
 
-def folder_to_episode_rewards(env, render, num_tests, folder_path, steps=100, seed=123,  **kwargs):
+def folder_to_episode_rewards(env, render, num_tests, folder_path, steps=400, seed=123,  **kwargs):
     saved = save_utils.load_actor(folder_path)
     def actor(x):
         # print(np.array([x], dtype=np.float32))
@@ -38,7 +38,7 @@ def run_tests(env, cmd_args):
     print("################################")
     means = []
     for folder in folders:
-        print("using folder:", folder)
+        print("using folder:", folder.parent)
         episode_rewards = [np.sum(rewards) for rewards in folder_to_episode_rewards(env, folder_path=folder, **vars(cmd_args))]
         mean_reward = np.mean(episode_rewards)
         means.append(mean_reward)

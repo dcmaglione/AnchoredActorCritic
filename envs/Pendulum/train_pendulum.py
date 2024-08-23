@@ -13,7 +13,7 @@ def parse_args_and_train(args=None):
     serializer = pendulum_serializer()
     print(serializer.abbrev_to_args.keys())
     cmd_args = args_utils.parse_arguments(serializer)
-    hp = HyperParams(epochs=cmd_args.epochs, q_lr=cmd_args.learning_rate, pi_lr=cmd_args.learning_rate, seed=cmd_args.seed, start_steps=cmd_args.start_steps, max_ep_len=200)
+    hp = HyperParams(epochs=cmd_args.epochs, q_lr=cmd_args.learning_rate, pi_lr=cmd_args.learning_rate, seed=cmd_args.seed, start_steps=cmd_args.start_steps, act_noise=cmd_args.act_noise, max_ep_len=200)
     generated_params = train_utils.create_train_folder_and_params("Pendulum-custom", hp, cmd_args, serializer)
     env_fn = lambda: PendulumEnv(g=cmd_args.gravity, setpoint=cmd_args.setpoint)
     ddpg(env_fn, **generated_params)

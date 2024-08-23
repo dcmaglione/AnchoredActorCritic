@@ -1,4 +1,5 @@
 from functools import partial
+from pathlib import Path
 from anchored_rl.utils import save_utils
 from anchored_rl.utils.args_utils import Arg_Serializer
 
@@ -16,11 +17,13 @@ def create_train_folder_and_params(experiment_name, hyperparams, cmd_args, seria
         "logger_kwargs": {"output_dir": save_path}
     }
     if cmd_args.prev_folder:
-        def existing_actor_critic(*args, **kwargs):
-            return save_utils.load_actor(cmd_args.prev_folder), save_utils.load_critic(cmd_args.prev_folder)
-        generated_params["actor_critic"] = existing_actor_critic
+        actor = lambda: save_utils.load_actor(Path(cmd_args.prev_folder, "models"))
+        critic = lambda: save_utils.load_critic(Path(cmd_args.prev_folder, "models"))
+        generated_params["actor_critic"] = lambda *args, **kwargs: (actor(), critic())
+        generated_params["random_start"] = False
+        if cmd_args.anchored:
+            replay_buffer = lambda: save_utils.load_replay(cmd_args.prev_folder)
+            generated_params["anchored"] = lambda *args, **kwargs: (critic(), replay_buffer())
 
-    if cmd_args.anchored:
-        generated_params["anchored"] = (save_utils.load_critic(cmd_args.prev_folder), save_utils.load_replay(cmd_args.prev_folder.parent))
 
     return generated_params
