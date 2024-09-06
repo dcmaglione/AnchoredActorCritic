@@ -3,8 +3,9 @@ from anchored_rl.utils import args_utils
 from anchored_rl.utils import train_utils
 from .lunar_lander import LunarLander
 import tensorflow as tf
+from keras.optimizers import schedules
 
-class WithStrPolyDecay(tf.optimizers.schedules.PolynomialDecay):
+class WithStrPolyDecay(schedules.PolynomialDecay):
     def __str__(self):
         return f"({self.initial_learning_rate},{self.end_learning_rate})"
 
