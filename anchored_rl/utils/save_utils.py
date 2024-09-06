@@ -52,8 +52,8 @@ def on_save(actor: Model, q_network: Model, epoch:int, replay_buffer, replay_sav
     path = Path(save_path, str(epoch), "models")
     os.makedirs(path, exist_ok=True)
     print("saving at", path.parent)
-    actor.save(Path(path, "actor.keras"))
-    q_network.save(Path(path, "critic.keras"))
+    actor.save(path / "actor.keras")
+    q_network.save(path / "critic.keras")
     if replay_save:
         with open( Path(save_path, "replay.p"), "wb" ) as replay_file:
             pickle.dump( replay_buffer, replay_file)

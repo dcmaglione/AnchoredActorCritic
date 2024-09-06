@@ -32,6 +32,7 @@ def train(cmd_args, serializer):
         epochs=cmd_args.epochs,
         train_every=50,
         train_steps=30,
+        q_importance=0.5,
     )
     generated_params = train_utils.create_train_folder_and_params("Reacher-custom", hp, cmd_args, serializer)
     env_fn = lambda: ReacherEnv(goal_distance=cmd_args.distance, bias=cmd_args.bias)

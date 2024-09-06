@@ -60,6 +60,7 @@ class HyperParams:
             max_ep_len=1000,
             train_every=50,
             train_steps=30,
+            q_importance=0.5,
         ):
         self.ac_kwargs = ac_kwargs
         self.seed = seed
@@ -76,6 +77,7 @@ class HyperParams:
         self.max_ep_len = max_ep_len
         self.train_every = train_every
         self.train_steps = train_steps
+        self.q_importance = q_importance
 
 """
 
@@ -259,7 +261,7 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
             if anchor_q:
                 pi_anchor = pi_and_before_tanh(anchor_obs1)
                 aq_c = tf.reduce_mean(anchor_q(tf.concat([anchor_obs1, pi_anchor["pi"]], axis=-1)))
-                q_c = p_mean(tf.stack([tf.squeeze(q_c)**0.5, aq_c]), 0.0)
+                q_c = p_mean(tf.stack([tf.squeeze(q_c)**hp.q_importance, aq_c]), 0.0)
             # objective for regularizing the output of the nn as well as the weights
             # tf.print(pi_network.trainable_variables)
             # tf.print(pi_network.losses)

@@ -9,6 +9,7 @@ def parse_args(args=None):
     parser.add_argument('-d', '--distance', type=float, default=0.2, help='radius of points from the center')
     parser.add_argument('-b', '--bias', type=float, default=0.0, help='bias of points from the center')
     parser.add_argument('-n', '--num_tests', type=int, default=20)
+    parser.add_argument('--steps', type=int, default=400)
     # group = parser.add_mutually_exclusive_group()
     parser.add_argument('-l', '--use_latest', action="store_true", help="use the latest training run from the save_folder")
     return parser.parse_args(args)
