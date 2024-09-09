@@ -7,7 +7,7 @@ def parse_args(args=None):
     parser.add_argument('save_folders', nargs='+', type=str, help='location of the training run')
     parser.add_argument('-r', '--render', action="store_true", help="render the env as it evaluates")
     parser.add_argument('-n', '--num_tests', type=int, default=20)
-    parser.add_argument('-s', '--steps', type=int, default=200)
+    parser.add_argument('-s', '--steps', type=int, default=400)
     parser.add_argument('-w', '--wind', action="store_true", help="enable wind")
     # group = parser.add_mutually_exclusive_group()
     parser.add_argument('-l', '--use_latest', action="store_true", help="use the latest training run from the save_folder")

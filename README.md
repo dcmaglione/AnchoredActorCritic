@@ -7,15 +7,15 @@
 
 ### Pendulum
 
-#### Train single pendulum on "simulation environment (gravity is 13 m/s^2)" while retaining replay buffer with 6 epochs and seed 1:
+#### Train single pendulum on a "simulation environment (gravity is 13 m/s^2)" while retaining replay buffer with 6 epochs and seed 1:
 ```bash
 python -m envs.Pendulum.train_pendulum --replay_save --seed 1 --epochs 6 --gravity 13
 ```
-#### Test the pendulum on same gravity
+#### Test the pendulum on the same gravity
 ```bash
 python -m envs.Pendulum.test_pendulum -r trained/Pendulum-custom/a_n:0.1,e:6,g:13,l:0.0001,s_s:1000,x:PDSR75BG7XSZ5DS/seeds/1/epochs/5 --gravity 13
 ```
-#### Test the pendulum on "real environment (gravity is 4 m/s^2)"
+#### Test the pendulum on the "real environment (gravity is 4 m/s^2)"
 ```bash
 python -m envs.Pendulum.test_pendulum -r trained/Pendulum-custom/a_n:0.1,e:6,g:13,l:0.0001,s_s:1000,x:PDSR75BG7XSZ5DS/seeds/1/epochs/5 --gravity 4
 ```
@@ -70,6 +70,28 @@ python -m envs.Reacher.test_reacher -d 0.2 -r trained/Reacher-custom/a_n:0.01,d:
 python -m envs.Reacher.test_reacher -d 0.2 -r trained/Reacher-custom/a:True,a_n:0.01,d:0.1,e:15,l:0.003,p:KXOA45F,s_s:5000,x:UOMCKM77Z5CH7FV/seeds/1/epochs/14
 ```
 
+### LunarLander
+#### Train lunar lander on simulated env (with wind)
+```bash
+python -m envs.LunarLander.train_lander --seed 1 --replay_save -w
+```
+#### Test lander on env with wind (same as training)
+```bash
+python -m envs.LunarLander.test_lander "trained/lander-custom/a_n:0.01,e:200,l:(0.001,1e-05),s_s:10000,w:True,x:GVYDCJE7NA346LN/seeds/1/epochs/199" -w
+```
+#### Test lander without wind ("real" environment)
+```bash
+python -m envs.LunarLander.test_lander "trained/lander-custom/a_n:0.01,e:200,l:(0.001,1e-05),s_s:10000,w:True,x:GVYDCJE7NA346LN/seeds/1/epochs/199"
+```
+#### Fine tune lander without anchors on the real environment
+```bash
+python -m envs.LunarLander.fine_tune_landers "trained/lander-custom/a_n:0.01,e:200,l:(0.001,1e-05),s_s:10000,w:True,x:GVYDCJE7NA346LN/seeds/1/epochs/199" --seed 1 -w
+```
+#### Fine tune lander with anchors on the real environment
+```bash
+python -m envs.LunarLander.fine_tune_landers "trained/lander-custom/a_n:0.01,e:200,l:(0.001,1e-05),s_s:10000,w:True,x:GVYDCJE7NA346LN/seeds/1/epochs/199" --seed 1 -w -a
+```
+
 ## Results
 
 ### Pendulum
@@ -121,3 +143,11 @@ Consider adding min and max reward
 | 0.1m     | 336.9751+-46.2759 |
 | 0.2m     | 347.0957+-26.0022 |
 
+### Lander
+
+#### Original Performance:
+
+| Wind     | Reward            |
+|----------|-------------------|
+| False    | 188.0787+-88.4907  |
+| True     | 158.0401+-116.4935  |

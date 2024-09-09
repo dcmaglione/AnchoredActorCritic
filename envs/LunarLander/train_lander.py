@@ -57,7 +57,7 @@ def generate_hypers(cmd_args):
         epochs=cmd_args.epochs,
         train_every=50,
         train_steps=30,
-        q_importance=0.5,
+        q_importance=1.0,
     )
 
 if __name__ == '__main__':
