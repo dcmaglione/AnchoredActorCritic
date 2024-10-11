@@ -40,7 +40,7 @@ def generate_hypers(cmd_args):
         steps_per_epoch=cmd_args.steps_per_epoch,
         ac_kwargs={
             "actor_hidden_sizes": (64, 64),
-            "critic_hidden_sizes": (128, 128, 128),
+            "critic_hidden_sizes": (400, 300),
             "obs_normalizer": LunarLander().observation_space.high
         },
         start_steps=cmd_args.start_steps,

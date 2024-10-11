@@ -652,12 +652,9 @@ class LunarLander(gym.Env, EzPickle):
         # dist = np.linalg.norm(state[0:1])/np.linalg.norm(self.observation_space.high[0:1])
         # np.sqrt(state[0]**2.0 + state[1]**2.0)/ np.sqrt(self.observation_space.high[0]**2.0 + self.observation_space.high[1]**2.0)
         # dist_rw = if dist
-        dist_x = np.clip((1.0 - (np.abs(state[0])/self.observation_space.high[0])), 0.0, 1.0)
-        dist_y = np.clip((1.0 - (np.abs(state[1])/self.observation_space.high[1])), 0.0, 1.0)
-        near_ground = dist_y if dist_y > 0.7 else dist_y*0.01
-        near_middle = dist_x if dist_x > 0.95 else dist_x*0.01
+        dist = np.clip(np.linalg.norm(1.0 - (np.abs(state[0:2])/self.observation_space.high[0:2])), 0.0, 1.0)**2.0
         legs = state[6]*state[7]
-        reward = p_mean(np.array([near_ground, near_middle, legs]), p=0.0, slack=1e-5)[0]
+        reward = p_mean(np.array([dist, legs]), p=0.0, slack=1e-5)[0]
 
         # print("reward", reward)
         terminated = False
