@@ -6,7 +6,7 @@ from pathlib import Path
 def many_fine_tunes():
     parser = argparse.ArgumentParser()
     parser.add_argument('folders', nargs="+", type=str, help='location of training runs to fine tune')
-    serializer = train_lander.lander_serializer(epochs=20, learning_rate=1e-5)
+    serializer = train_lander.lander_serializer(epochs=50, learning_rate=1e-5)
     # serializer.abbrev_to_args['a'] = args_utils.Serialized_Argument(name='--anchored', action='store_true', default=anchored)
     serializer.add_serialized_args_to_parser(parser)
     cmd_args = parser.parse_args()
