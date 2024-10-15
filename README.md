@@ -77,20 +77,37 @@ python -m envs.LunarLander.train_lander --seed 1 --replay_save -w
 ```
 #### Test lander on env with wind (same as training)
 ```bash
-python -m envs.LunarLander.test_lander "trained/lander-custom/a_n:0.01,e:200,l:(0.001,1e-05),s_s:10000,w:True,x:GVYDCJE7NA346LN/seeds/1/epochs/199" -w
+python -m envs.LunarLander.test_lander "trained/lander-custom/a_n:0.01,e:50,l:0.001,s_s:10000,w:True,x:EEUBTEYC3HCGRJC/seeds/1/epochs/49" -w
 ```
 #### Test lander without wind ("real" environment)
 ```bash
-python -m envs.LunarLander.test_lander "trained/lander-custom/a_n:0.01,e:200,l:(0.001,1e-05),s_s:10000,w:True,x:GVYDCJE7NA346LN/seeds/1/epochs/199"
+python -m envs.LunarLander.test_lander "trained/lander-custom/a_n:0.01,e:50,l:0.001,s_s:10000,w:True,x:EEUBTEYC3HCGRJC/seeds/1/epochs/49"
 ```
 #### Fine tune lander without anchors on the real environment
 ```bash
-python -m envs.LunarLander.fine_tune_landers "trained/lander-custom/a_n:0.01,e:200,l:(0.001,1e-05),s_s:10000,w:True,x:GVYDCJE7NA346LN/seeds/1/epochs/199" --seed 1 -w
+python -m envs.LunarLander.fine_tune_landers "trained/lander-custom/a_n:0.01,e:50,l:0.001,s_s:10000,w:True,x:EEUBTEYC3HCGRJC/seeds/1/epochs/49" --seed 1 --epochs 10
 ```
 #### Fine tune lander with anchors on the real environment
 ```bash
-python -m envs.LunarLander.fine_tune_landers "trained/lander-custom/a_n:0.01,e:200,l:(0.001,1e-05),s_s:10000,w:True,x:GVYDCJE7NA346LN/seeds/1/epochs/199" --seed 1 -w -a
+python -m envs.LunarLander.fine_tune_landers "trained/lander-custom/a_n:0.01,e:50,l:0.001,s_s:10000,w:True,x:EEUBTEYC3HCGRJC/seeds/1/epochs/49" --seed 1 --epochs 10 -a
 ```
+#### Test fine tuned lander without anchors on the old environment (with wind)
+```bash
+python -m envs.LunarLander.test_lander "trained/lander-custom/a:True,a_n:0.01,e:10,l:1e-05,p:7G5JJAX,s_s:5000,x:Z6KABHFRFQKXAOP/seeds/1/epochs/9" -w
+```
+#### Test fine tuned lander with anchors on the old environment (with wind)
+```bash
+python -m envs.LunarLander.test_lander "trained/lander-custom/a_n:0.01,e:10,l:1e-05,p:7G5JJAX,s_s:5000,x:Z6KABHFRFQKXAOP/seeds/1/epochs/9" -w
+```
+#### Test fine tuned lander without anchors on the new environment (without wind)
+```bash
+python -m envs.LunarLander.test_lander "trained/lander-custom/a:True,a_n:0.01,e:10,l:1e-05,p:7G5JJAX,s_s:5000,x:Z6KABHFRFQKXAOP/seeds/1/epochs/9"
+```
+#### Test fine tuned lander with anchors on the new environment (without wind)
+```bash
+python -m envs.LunarLander.test_lander "trained/lander-custom/a_n:0.01,e:10,l:1e-05,p:7G5JJAX,s_s:5000,x:Z6KABHFRFQKXAOP/seeds/1/epochs/9"
+```
+
 
 ## Results
 
@@ -149,5 +166,19 @@ Consider adding min and max reward
 
 | Wind     | Reward            |
 |----------|-------------------|
-| False    | 188.0787+-88.4907  |
-| True     | 158.0401+-116.4935  |
+| False    | 138.7296+-70.4703 |
+| True     | 131.1230+-74.6081 |
+
+#### After finetuning to no wind (without anchors):
+
+| Wind     | Reward            |
+|----------|-------------------|
+| False    | 97.1273+-116.2350 |
+| True     | 76.9587+-103.7659 |
+
+#### With ours (with anchors):
+
+| Wind     | Reward            |
+|----------|-------------------|
+| False    | 235.7062+-84.9603 |
+| True     | 161.9801+-98.4721 |

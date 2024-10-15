@@ -488,7 +488,7 @@ class LunarLander(gym.Env, EzPickle):
 
     def are_bodies_in_contact(self, body1, body2):
         # Get the contact list from the world
-        for contact in self.env.world.contacts:
+        for contact in self.world.contacts:
             # Check if the contact involves both bodies
             if (contact.fixtureA.body == body1 and contact.fixtureB.body == body2) or \
                (contact.fixtureA.body == body2 and contact.fixtureB.body == body1):
@@ -646,7 +646,7 @@ class LunarLander(gym.Env, EzPickle):
 
         pos = self.lander.position
         vel = self.lander.linearVelocity
-        legs_contact = 1.0*np.array([self.are_bodies_in_contact(leg, self.env.moon) for leg in self.env.legs]) # hack because the contacts don't work when the legs are asleep which affects our landed objective
+        legs_contact = 1.0*np.array([self.are_bodies_in_contact(leg, self.moon) for leg in self.legs]) # hack because the contacts don't work when the legs are asleep which affects our landed objective
         state = [
             (pos.x - VIEWPORT_W / SCALE / 2) / (VIEWPORT_W / SCALE / 2),
             (pos.y - (self.helipad_y + LEG_DOWN / SCALE)) / (VIEWPORT_H / SCALE / 2),
@@ -663,10 +663,11 @@ class LunarLander(gym.Env, EzPickle):
         # dist = np.linalg.norm(state[0:1])/np.linalg.norm(self.observation_space.high[0:1])
         # np.sqrt(state[0]**2.0 + state[1]**2.0)/ np.sqrt(self.observation_space.high[0]**2.0 + self.observation_space.high[1]**2.0)
         # dist_rw = if dist
-        dist = np.clip(np.linalg.norm(1.0 - (np.abs(state[0:2])/self.observation_space.high[0:2])), 0.0, 1.0)**2.0
-        very_near = np.clip(np.linalg.norm(1.0 - 3.0*(np.abs(state[0:2])/self.observation_space.high[0:2])), 0.0, 1.0)
+        dist = np.linalg.norm((np.abs(state[0:2])/self.observation_space.high[0:2]))
+        near = np.clip(1.0 - dist, 0.0, 1.0)**2.0
+        very_near = np.clip(1.0 - 3*dist, 0.0, 1.0)
         legs = state[6]*state[7]
-        reward = p_mean(np.array([dist, very_near, legs]), p=0.1)[0]
+        reward = p_mean(np.array([near, very_near, legs]), p=0.5)[0]
 
         # print("reward", reward)
         terminated = False

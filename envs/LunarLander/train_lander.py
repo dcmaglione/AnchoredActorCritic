@@ -10,7 +10,7 @@ class WithStrPolyDecay(schedules.PolynomialDecay):
         return f"({self.initial_learning_rate},{self.end_learning_rate})"
 
 def lander_serializer(
-        epochs=200,
+        epochs=50,
         steps_per_epoch=5000,
         learning_rate=None
     ):
@@ -47,20 +47,19 @@ def generate_hypers(cmd_args):
         replay_size=int(1e6),
         gamma=0.99,
         polyak=0.99,
-        # pi_lr=tf.optimizers.schedules.PolynomialDecay(1e-3, 50000, end_learning_rate=1e-5),
-        # q_lr=tf.optimizers.schedules.PolynomialDecay(1e-3, 50000, end_learning_rate=1e-5),
         pi_lr=cmd_args.learning_rate,
         q_lr=cmd_args.learning_rate,
-        batch_size=32,
+        batch_size=100,
         act_noise=cmd_args.act_noise,
         max_ep_len=200,
         epochs=cmd_args.epochs,
         train_every=50,
-        train_steps=30,
+        train_steps=50,
         q_importance=1.0,
+        go_to_center=0.1
     )
 
 if __name__ == '__main__':
-    serializer = lander_serializer()
+    serializer = lander_serializer(learning_rate=1e-3)
     cmd_args = args_utils.parse_arguments(serializer)
     train(cmd_args, generate_hypers(cmd_args), serializer)

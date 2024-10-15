@@ -61,6 +61,7 @@ class HyperParams:
             train_every=50,
             train_steps=30,
             q_importance=0.5,
+            go_to_center=0.2
         ):
         self.ac_kwargs = ac_kwargs
         self.seed = seed
@@ -78,6 +79,7 @@ class HyperParams:
         self.train_every = train_every
         self.train_steps = train_steps
         self.q_importance = q_importance
+        self.go_to_center = go_to_center
 
 """
 
@@ -242,7 +244,7 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
         return q_loss, q
 
 
-    # @tf.function
+    @tf.function
     def pi_update(obs1, obs2, anchor_obs1, anchor_ac1, debug=False):
         with tf.GradientTape() as tape:
             outputs = pi_and_before_tanh(obs1)
@@ -268,7 +270,7 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
             # reg_c = tf.squeeze(p_mean(tf.stack([spatial_c, temporal_c, before_tanh_c],axis=1), 0.0))
             # all_c = p_mean(tf.stack([scale_gradient(tf.squeeze(aq_c), 3e2), tf.squeeze(before_tanh_c)]), p=0.0)
             # all_c = scale_gradient(aq_c,0.0)
-            all_c = p_mean(tf.stack([scale_gradient(tf.squeeze(q_c), 3e2), scale_gradient(tf.squeeze(before_tanh_c),0.2)]), p=0.0)
+            all_c = p_mean(tf.stack([scale_gradient(tf.squeeze(q_c), 3e2), scale_gradient(tf.squeeze(before_tanh_c),hp.go_to_center)]), p=0.0)
             # all_c = p_mean(tf.stack([ scale_gradient(aq_c, 3e2), scale_gradient(q_c, 3e2)], axis=1), 0.0)
             # all_c = q_c + 0.008*pi_diffs_c + 0.005*pi_bar_c + 0.025*center_c
             # if debug:
