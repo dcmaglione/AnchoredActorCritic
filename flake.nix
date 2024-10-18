@@ -24,7 +24,7 @@
       devShell = forAllSystems (system: pkgs:
         let
             python = pkgs.python311.withPackages (p: with p;[
-              numpy pygame pybullet matplotlib gymnasium tensorflow tqdm keras pybox2d
+              numpy pygame pybullet matplotlib gymnasium tensorflow tqdm keras pybox2d seaborn scipy
               (callPackage ./mujoco-py.nix {})
             ]);
         in pkgs.mkShell {
