@@ -12,7 +12,8 @@ class WithStrPolyDecay(schedules.PolynomialDecay):
 def lander_serializer(
         epochs=50,
         steps_per_epoch=5000,
-        learning_rate=None
+        learning_rate=None,
+        initial_random=1000.0
     ):
     if learning_rate is None:
         learning_rate = WithStrPolyDecay(
@@ -25,6 +26,7 @@ def lander_serializer(
     return args_utils.Arg_Serializer.join(args_utils.Arg_Serializer(
         abbrev_to_args= {
             'w': args_utils.Serialized_Argument(name='--wind', action="store_true", help='enable wind in env'),
+            'initial_random': args_utils.Serialized_Argument(name='--initial-random', type=float, help="initial randomization amount of lander", default=initial_random),
             'steps': args_utils.Serialized_Argument(name='--steps-per-epoch', type=int, help="number of total steps in one epoch", default=steps_per_epoch)
         }), args_utils.default_serializer(epochs, learning_rate, act_noise=0.01, start_steps=10000))
 
@@ -40,7 +42,7 @@ def generate_hypers(cmd_args):
         steps_per_epoch=cmd_args.steps_per_epoch,
         ac_kwargs={
             "actor_hidden_sizes": (64, 64),
-            "critic_hidden_sizes": (400, 300),
+            "critic_hidden_sizes": (256, 256),
             "obs_normalizer": LunarLander().observation_space.high
         },
         start_steps=cmd_args.start_steps,
@@ -54,12 +56,12 @@ def generate_hypers(cmd_args):
         max_ep_len=200,
         epochs=cmd_args.epochs,
         train_every=50,
-        train_steps=50,
+        train_steps=30,
         q_importance=1.0,
         go_to_center=0.1
     )
 
 if __name__ == '__main__':
-    serializer = lander_serializer(learning_rate=1e-3)
+    serializer = lander_serializer(learning_rate=1e-3, initial_random=1000.0)
     cmd_args = args_utils.parse_arguments(serializer)
     train(cmd_args, generate_hypers(cmd_args), serializer)

@@ -236,6 +236,7 @@ class LunarLander(gym.Env, EzPickle):
         enable_wind: bool = False,
         wind_power: float = 5.0,
         turbulence_power: float = 0.5,
+        initial_random: float = 1000.0,  # Add this line
     ):
         EzPickle.__init__(
             self,
@@ -245,6 +246,7 @@ class LunarLander(gym.Env, EzPickle):
             enable_wind,
             wind_power,
             turbulence_power,
+            initial_random,  # Add this line
         )
 
         assert (
@@ -333,6 +335,8 @@ class LunarLander(gym.Env, EzPickle):
 
         self.render_mode = render_mode
 
+        self.initial_random = initial_random  # Add this line
+
     def _destroy(self):
         if not self.moon:
             return
@@ -405,8 +409,8 @@ class LunarLander(gym.Env, EzPickle):
                 friction=0.1,
                 categoryBits=0x0010,
                 maskBits=0x001,  # collide only with ground
-                restitution=0.0,
-            ),  # 0.99 bouncy
+                restitution=0.0,  # 0.99 bouncy
+            ),
         )
         self.lander.color1 = (128, 102, 230)
         self.lander.color2 = (77, 77, 128)
@@ -414,8 +418,8 @@ class LunarLander(gym.Env, EzPickle):
         # Apply the initial random impulse to the lander
         self.lander.ApplyForceToCenter(
             (
-                self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM),
-                self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM),
+                self.np_random.uniform(-self.initial_random, self.initial_random),
+                self.np_random.uniform(-self.initial_random, self.initial_random),
             ),
             True,
         )

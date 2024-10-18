@@ -8,6 +8,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.colors as mcolors
+import os
+from matplotlib.patches import FancyArrowPatch, ConnectionPatch
 
 T = TypeVar('T')
 
@@ -86,82 +88,73 @@ def plot_fancy_violins(method: Method):
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
 
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(2.5, 3))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5, 2), sharey=True)  # Changed to 1 row, 2 columns
 
     def plot_violin(ax, naive: List[float], original: List[float], anchored: List[float], label: str):
-        # Use white color for violin plots
         sns.violinplot(data=[naive, original, anchored], ax=ax, inner=None, cut=0, color="white", linewidth=1.0)
         
-        # Create a custom colormap
-        colors = ['#d7191c', '#404040', '#1a9641']  # Red to Dark Grey to Green
-        n_bins = 100
+        colors = ['#d7191c', '#fdae61', '#ffffbf', '#a6d96a', '#1a9641']
+        n_bins = 256
         cmap = mcolors.LinearSegmentedColormap.from_list("custom", colors, N=n_bins)
         
+        all_changes = [n - o for n, o in zip(naive, original)] + [a - o for a, o in zip(anchored, original)]
+        max_abs_change = max(abs(max(all_changes)), abs(min(all_changes)))
+        
         def get_color(change):
-            # Normalize change to [-1, 1] range
-            norm_change = max(min(change / 0.5, 1), -1)
-            return cmap(0.5 * (norm_change + 1))  # Map [-1, 1] to [0, 1]
+            norm_change = change / max_abs_change
+            norm_change = np.sign(norm_change) * np.power(abs(norm_change), 0.5)
+            return cmap(0.5 * (norm_change + 1))
         
-        def draw_arrow(start, end, start_x, end_x):
-            change = end - start
+        def draw_arrow(start_x, start_y, end_x, end_y):
+            change = end_y - start_y
             color = get_color(change)
-            ax.annotate('', xy=(end_x, end), xytext=(start_x, start),
-                        arrowprops=dict(arrowstyle='->', color=color, alpha=0.3,
-                                        linewidth=1.5, connectionstyle="arc3,rad=0"))
+            
+            arrow = ConnectionPatch(
+                xyA=(start_x, start_y), xyB=(end_x, end_y),
+                coordsA="data", coordsB="data",
+                axesA=ax, axesB=ax,
+                arrowstyle="->", shrinkA=4, shrinkB=2,
+                color=color, alpha=0.6, linewidth=1.5
+            )
+            ax.add_artist(arrow)
         
-        for i, (n, o, a) in enumerate(zip(naive, original, anchored)):
-            # Change dot color to black and keep size small
-            ax.scatter(0, n, color='black', alpha=0.8, s=10, zorder=3)
-            ax.scatter(1, o, color='black', alpha=0.8, s=10, zorder=3)
-            ax.scatter(2, a, color='black', alpha=0.8, s=10, zorder=3)
+        for n, o, a in zip(naive, original, anchored):
+            draw_arrow(1, o, 0, n)  # Original to Naive
+            draw_arrow(1, o, 2, a)  # Original to Anchored
+            
+            # Updated scatter calls to remove outlines
+            ax.scatter(0, n, color='black', alpha=0.8, s=10, zorder=3, edgecolors='none')
+            ax.scatter(1, o, color='black', alpha=0.8, s=10, zorder=3, edgecolors='none')
+            ax.scatter(2, a, color='black', alpha=0.8, s=10, zorder=3, edgecolors='none')
 
-            # Original to Naive arrow
-            draw_arrow(o, n, 1, 0)
-            # Original to Anchored arrow
-            draw_arrow(o, a, 1, 2)
-        
-        # Adjust the title position
-        ax.set_title(label, fontsize=10, pad=3)  # Reduced pad value
-        
-        ax.set_ylabel('Rewards', fontsize=8)
+        ax.set_title(label, fontsize=10, pad=3)
+        if ax == ax1:  # Only set ylabel for the first subplot
+            ax.set_ylabel('Rewards', fontsize=8)
         ax.set_xticks([0, 1, 2])
         ax.set_xticklabels(['Naively-tuned\non target', 'Trained\non source', 'Anchor-tuned\non target'], 
                            fontsize=8, rotation=0, ha='center')
-        ax.tick_params(axis='x', which='major', pad=-8)  # Use negative padding to move labels higher
+        ax.tick_params(axis='x', which='major', pad=0)
         ax.set_xlim(-0.5, 2.5)
         ax.tick_params(axis='both', which='major', labelsize=8)
         
-        # Remove all spines
         for spine in ax.spines.values():
             spine.set_visible(False)
         
-        # Make horizontal grid lines dashed and more transparent
         ax.yaxis.grid(True, linestyle='--', alpha=0.3)
-        
-        # Remove vertical grid lines
         ax.xaxis.grid(False)
         
-        # Adjust y-axis to ensure all points are visible
         y_min, y_max = ax.get_ylim()
         ax.set_ylim(y_min - 0.05 * (y_max - y_min), y_max + 0.05 * (y_max - y_min))
     
     plot_violin(ax1, method.naive.Source, method.original.Source, method.anchored.Source, "Tested on Source")
     plot_violin(ax2, method.naive.Target, method.original.Target, method.anchored.Target, "Tested on Target")
     
-    # Adjust subplot parameters
-    plt.subplots_adjust(left=0.205,    # left margin
-                        right=0.967,   # right margin
-                        bottom=0.1,    # bottom margin
-                        top=0.95,      # Increased top margin to lower titles
-                        hspace=0.5)    # height space between subplots
-    
-    # Remove overall figure title if it exists
+    plt.subplots_adjust(left=0.1, right=0.98, bottom=0.2, top=0.9, wspace=0.1)
     fig.suptitle('')
     
-    # Remove tight_layout() as it might interfere with manual adjustments
-    # plt.tight_layout()
-
-    plt.savefig('fancy_violins.svg', bbox_inches='tight')
+    os.makedirs('plots', exist_ok=True)
+    plt.savefig('plots/fancy_violins.svg', bbox_inches='tight')
+    print(f"Figure saved as {os.path.abspath('plots/fancy_violins.svg')}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Load pickle files from a folder structure and visualize results.')

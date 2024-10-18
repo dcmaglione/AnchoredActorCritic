@@ -1,9 +1,9 @@
 trap 'kill $(jobs -p)' EXIT
 
 # Original
-python -m envs.LunarLander.test_lander trained/lander-custom/a_n:0.01,e:50,l:0.001,s_s:10000,w:True,x:EEUBTEYC3HCGRJC/seeds/*/epochs/49 -w --store_results results/lander/original/Source.pkl &
+python -m envs.LunarLander.test_lander trained/lander-custom/a_n:0.01,e:50,l:0.001,s_s:10000,x:YQJBZMB5V5LRVHI/seeds/*/epochs/49 --initial-random 1500.0 --store_results results/lander/original/Source.pkl &
 sleep 1
-python -m envs.LunarLander.test_lander trained/lander-custom/a_n:0.01,e:50,l:0.001,s_s:10000,w:True,x:EEUBTEYC3HCGRJC/seeds/*/epochs/49 --store_results results/lander/original/Target.pkl &
+python -m envs.LunarLander.test_lander trained/lander-custom/a_n:0.01,e:50,l:0.001,s_s:10000,x:YQJBZMB5V5LRVHI/seeds/*/epochs/49 --initial-random 100.0 --store_results results/lander/original/Target.pkl &
 sleep 1
 
 # Naive
