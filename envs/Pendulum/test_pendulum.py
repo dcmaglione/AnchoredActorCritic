@@ -11,6 +11,7 @@ def parse_args(args=None):
     parser.add_argument('-g', '--gravity', type=float, default=9.81)
     parser.add_argument('-s_p', '--setpoint', type=float, default=0.0)
     parser.add_argument('--steps', type=int, default=400)
+    parser.add_argument('--store_results', type=str, default=None, help='path to store the test results')
 
     # group = parser.add_mutually_exclusive_group()
     parser.add_argument('-l', '--use_latest', action="store_true", help="use the latest training run from the save_folder")

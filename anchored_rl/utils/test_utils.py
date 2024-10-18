@@ -1,5 +1,7 @@
+import pickle
 from anchored_rl.utils import save_utils, loss_composition
 import numpy as np
+import os
 
 def test(actor, env, seed=123, render=True, num_steps=400):
     o,i = env.reset(seed=seed)
@@ -37,14 +39,21 @@ def run_tests(env, cmd_args):
     print("################################")
     print("################################")
     means = []
+    data = {}
     for folder in folders:
         print("using folder:", folder.parent)
         episode_rewards = [np.sum(rewards) for rewards in folder_to_episode_rewards(env, folder_path=folder, **vars(cmd_args))]
         mean_reward = np.mean(episode_rewards)
         means.append(mean_reward)
         std = np.std(episode_rewards)
+        data[folder] = episode_rewards
         print(f"{mean_reward:.4f}+-{std:.4f}")
         print(f"geomean: {loss_composition.geo(episode_rewards):.4f}")
+
+    if hasattr(cmd_args, 'store_results') and cmd_args.store_results is not None:
+        os.makedirs(os.path.dirname(cmd_args.store_results), exist_ok=True)
+        with open(cmd_args.store_results, 'wb') as f:
+            pickle.dump(data, f)
     print("################################")
     print("################################")
     print("################################")

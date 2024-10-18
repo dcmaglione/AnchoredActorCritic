@@ -234,8 +234,8 @@ class LunarLander(gym.Env, EzPickle):
         continuous: bool = True,
         gravity: float = -10.0,
         enable_wind: bool = False,
-        wind_power: float = 15.0,
-        turbulence_power: float = 1.5,
+        wind_power: float = 5.0,
+        turbulence_power: float = 0.5,
     ):
         EzPickle.__init__(
             self,
