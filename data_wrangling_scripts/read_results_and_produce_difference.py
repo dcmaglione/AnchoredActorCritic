@@ -84,11 +84,11 @@ def calculate_results(method: Method) -> Result:
         )
     )
 
-def plot_fancy_violins(method: Method):
+def plot_fancy_violins(method: Method, reward_upper_bound: float):
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5, 2), sharey=True)  # Changed to 1 row, 2 columns
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5, 2), sharey=True)
 
     def plot_violin(ax, naive: List[float], original: List[float], anchored: List[float], label: str):
         sns.violinplot(data=[naive, original, anchored], ax=ax, inner=None, cut=0, color="white", linewidth=1.0)
@@ -122,13 +122,12 @@ def plot_fancy_violins(method: Method):
             draw_arrow(1, o, 0, n)  # Original to Naive
             draw_arrow(1, o, 2, a)  # Original to Anchored
             
-            # Updated scatter calls to remove outlines
             ax.scatter(0, n, color='black', alpha=0.8, s=10, zorder=3, edgecolors='none')
             ax.scatter(1, o, color='black', alpha=0.8, s=10, zorder=3, edgecolors='none')
             ax.scatter(2, a, color='black', alpha=0.8, s=10, zorder=3, edgecolors='none')
 
         ax.set_title(label, fontsize=10, pad=3)
-        if ax == ax1:  # Only set ylabel for the first subplot
+        if ax == ax1:
             ax.set_ylabel('Rewards', fontsize=8)
         ax.set_xticks([0, 1, 2])
         ax.set_xticklabels(['Naively-tuned\non target', 'Trained\non source', 'Anchor-tuned\non target'], 
@@ -143,8 +142,11 @@ def plot_fancy_violins(method: Method):
         ax.yaxis.grid(True, linestyle='--', alpha=0.3)
         ax.xaxis.grid(False)
         
-        y_min, y_max = ax.get_ylim()
-        ax.set_ylim(y_min - 0.05 * (y_max - y_min), y_max + 0.05 * (y_max - y_min))
+        # Set y-axis limits based on the reward upper bound
+        y_min = min(min(naive), min(original), min(anchored))
+        y_max = max(max(naive), max(original), max(anchored), reward_upper_bound)
+        padding = 0.05 * (y_max - y_min)
+        ax.set_ylim(y_min - padding, y_max + padding)
     
     plot_violin(ax1, method.naive.Source, method.original.Source, method.anchored.Source, "Tested on Source")
     plot_violin(ax2, method.naive.Target, method.original.Target, method.anchored.Target, "Tested on Target")
@@ -160,6 +162,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Load pickle files from a folder structure and visualize results.')
     parser.add_argument('folder', type=str, help='folder containing the pickle files')
     parser.add_argument('--plot', action='store_true', help='generate a plot of the results')
+    parser.add_argument('--reward_upper_bound', type=float, default=200, help='upper bound for the reward')
     args = parser.parse_args()
 
     method = load_pickles_from_folder(Path(args.folder))
@@ -170,4 +173,4 @@ if __name__ == "__main__":
     print(result)
 
     if args.plot:
-        plot_fancy_violins(method)
+        plot_fancy_violins(method, args.reward_upper_bound)

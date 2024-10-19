@@ -33,7 +33,7 @@ def lander_serializer(
 
 def train(cmd_args, hp, serializer):
     generated_params = train_utils.create_train_folder_and_params("lander-custom", hp, cmd_args, serializer)
-    env_fn = lambda: LunarLander(enable_wind=cmd_args.wind)
+    env_fn = lambda: LunarLander(enable_wind=cmd_args.wind, initial_random=cmd_args.initial_random)
     ddpg(env_fn, save_freq=1, **generated_params)
 
 def generate_hypers(cmd_args):
@@ -57,7 +57,7 @@ def generate_hypers(cmd_args):
         epochs=cmd_args.epochs,
         train_every=50,
         train_steps=30,
-        q_importance=1.0,
+        q_importance=0.5,
         go_to_center=0.1
     )
 
