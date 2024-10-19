@@ -42,7 +42,7 @@ def generate_hypers(cmd_args):
         steps_per_epoch=cmd_args.steps_per_epoch,
         ac_kwargs={
             "actor_hidden_sizes": (64, 64),
-            "critic_hidden_sizes": (256, 256),
+            "critic_hidden_sizes": (400, 300),
             "obs_normalizer": LunarLander().observation_space.high
         },
         start_steps=cmd_args.start_steps,
@@ -58,10 +58,10 @@ def generate_hypers(cmd_args):
         train_every=50,
         train_steps=30,
         q_importance=0.5,
-        go_to_center=0.1
+        go_to_center=0.02
     )
 
 if __name__ == '__main__':
-    serializer = lander_serializer(learning_rate=1e-3, initial_random=1000.0)
+    serializer = lander_serializer(initial_random=1000.0)
     cmd_args = args_utils.parse_arguments(serializer)
     train(cmd_args, generate_hypers(cmd_args), serializer)

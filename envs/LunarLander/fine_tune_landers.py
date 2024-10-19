@@ -15,7 +15,7 @@ def many_fine_tunes():
         hp = train_lander.generate_hypers(cmd_args)
         hp.start_steps = 15000
         hp.act_noise = 0.01
-        hp.q_importance = 0.25
+        hp.q_importance = 0.5
         train_lander.train(cmd_args, hp, serializer)
 
 #"trained/lander-custom/e:200,l:(0.001,1e-05),w:True,x:Y5SY3KTVQZ3OVXF/seeds/"
