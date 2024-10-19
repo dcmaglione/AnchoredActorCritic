@@ -22,9 +22,11 @@ run_tests() {
     local config_type=$1
     shift
     local paths=("$@")
-    python -m envs.Reacher.test_reacher "${paths[@]}" --store_results "results/reacher/${config_type}/Source.pkl" --distance 0.2 &
+    PYTHONUNBUFFERED=1 python -m envs.Reacher.test_reacher "${paths[@]}" --store_results "results/reacher/${config_type}/Source.pkl" --distance 0.2 |
+    tee >(grep "Average Reward" | tail -n 1) &
     sleep 1
-    python -m envs.Reacher.test_reacher "${paths[@]}" --store_results "results/reacher/${config_type}/Target.pkl" --distance 0.1 &
+    PYTHONUNBUFFERED=1 python -m envs.Reacher.test_reacher "${paths[@]}" --store_results "results/reacher/${config_type}/Target.pkl" --distance 0.1 |
+    tee >(grep "Average Reward" | tail -n 1) &
     sleep 1
 }
 

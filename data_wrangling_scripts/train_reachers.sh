@@ -12,7 +12,7 @@ train_reacher() {
     tee >(grep "saving at" | tail -n 1 | sed 's/.*saving at //' >> results/reacher/original/paths.txt)
 }
 
-for i in $(seq 1 6); do
+for i in $(seq 1 12); do
     train_reacher $i &
     sleep 1
 done
