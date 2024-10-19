@@ -1,0 +1,12 @@
+trained/Reacher-custom/a_n:0.01,d:0.1,e:15,l:0.003,p:2PFOJMA,s_s:5000,x:XAKZGEAKFQVWRWL/seeds/1/epochs/14
+trained/Reacher-custom/a_n:0.01,d:0.1,e:15,l:0.003,p:FXNB3NP,s_s:5000,x:XAKZGEAKFQVWRWL/seeds/1/epochs/14
+trained/Reacher-custom/a_n:0.01,d:0.1,e:15,l:0.003,p:T5TWYT5,s_s:5000,x:XAKZGEAKFQVWRWL/seeds/1/epochs/14
+trained/Reacher-custom/a_n:0.01,d:0.1,e:15,l:0.003,p:7D6OKX7,s_s:5000,x:XAKZGEAKFQVWRWL/seeds/1/epochs/14
+trained/Reacher-custom/a_n:0.01,d:0.1,e:15,l:0.003,p:SSWHEKT,s_s:5000,x:XAKZGEAKFQVWRWL/seeds/1/epochs/14
+trained/Reacher-custom/a_n:0.01,d:0.1,e:15,l:0.003,p:32XSLO6,s_s:5000,x:XAKZGEAKFQVWRWL/seeds/1/epochs/14
+trained/Reacher-custom/a_n:0.01,d:0.1,e:15,l:0.003,p:IIYB3XL,s_s:5000,x:XAKZGEAKFQVWRWL/seeds/1/epochs/14
+trained/Reacher-custom/a_n:0.01,d:0.1,e:15,l:0.003,p:72ILBC6,s_s:5000,x:XAKZGEAKFQVWRWL/seeds/1/epochs/14
+trained/Reacher-custom/a_n:0.01,d:0.1,e:15,l:0.003,p:FEE4L63,s_s:5000,x:XAKZGEAKFQVWRWL/seeds/1/epochs/14
+trained/Reacher-custom/a_n:0.01,d:0.1,e:15,l:0.003,p:EHGS6AC,s_s:5000,x:XAKZGEAKFQVWRWL/seeds/1/epochs/14
+trained/Reacher-custom/a_n:0.01,d:0.1,e:15,l:0.003,p:KFYNFSL,s_s:5000,x:XAKZGEAKFQVWRWL/seeds/1/epochs/14
+trained/Reacher-custom/a_n:0.01,d:0.1,e:15,l:0.003,p:NQVLTEH,s_s:5000,x:XAKZGEAKFQVWRWL/seeds/1/epochs/14

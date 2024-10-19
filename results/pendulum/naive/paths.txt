@@ -1,0 +1,12 @@
+trained/Pendulum-custom/a_n:0.01,e:5,g:4,l:0.0001,p:RSMF3J5,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/1/epochs/4
+trained/Pendulum-custom/a_n:0.01,e:5,g:4,l:0.0001,p:I66V3YQ,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/1/epochs/4
+trained/Pendulum-custom/a_n:0.01,e:5,g:4,l:0.0001,p:6OCG4XF,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/1/epochs/4
+trained/Pendulum-custom/a_n:0.01,e:5,g:4,l:0.0001,p:BXOX3UZ,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/1/epochs/4
+trained/Pendulum-custom/a_n:0.01,e:5,g:4,l:0.0001,p:JHLQQTK,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/1/epochs/4
+trained/Pendulum-custom/a_n:0.01,e:5,g:4,l:0.0001,p:BSEOT6S,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/1/epochs/4
+trained/Pendulum-custom/a_n:0.01,e:5,g:4,l:0.0001,p:47HXQOF,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/1/epochs/4
+trained/Pendulum-custom/a_n:0.01,e:5,g:4,l:0.0001,p:2YEQZY4,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/1/epochs/4
+trained/Pendulum-custom/a_n:0.01,e:5,g:4,l:0.0001,p:L5R7NRM,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/1/epochs/4
+trained/Pendulum-custom/a_n:0.01,e:5,g:4,l:0.0001,p:DZXVFGD,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/1/epochs/4
+trained/Pendulum-custom/a_n:0.01,e:5,g:4,l:0.0001,p:CPTE4KC,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/1/epochs/4
+trained/Pendulum-custom/a_n:0.01,e:5,g:4,l:0.0001,p:HIORBRB,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/1/epochs/4
