@@ -84,14 +84,22 @@ def calculate_results(method: Method) -> Result:
         )
     )
 
-def plot_fancy_violins(method: Method, reward_upper_bound: float):
+def plot_fancy_violins(method: Method, output_folder: str):
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(5, 2), sharey=True)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(4, 1.3), sharey=True)
 
     def plot_violin(ax, naive: List[float], original: List[float], anchored: List[float], label: str):
-        sns.violinplot(data=[naive, original, anchored], ax=ax, inner=None, cut=0, color="white", linewidth=1.0)
+        positions = [0, 1, 2]
+        data = [naive, original, anchored]
+        
+        parts = ax.violinplot(data, positions, points=100, widths=0.8, showmeans=False, showextrema=False, showmedians=False)
+        
+        for pc in parts['bodies']:
+            pc.set_facecolor('white')
+            pc.set_edgecolor('black')
+            pc.set_alpha(0.7)
         
         colors = ['#d7191c', '#fdae61', '#ffffbf', '#a6d96a', '#1a9641']
         n_bins = 256
@@ -114,7 +122,7 @@ def plot_fancy_violins(method: Method, reward_upper_bound: float):
                 coordsA="data", coordsB="data",
                 axesA=ax, axesB=ax,
                 arrowstyle="->", shrinkA=4, shrinkB=2,
-                color=color, alpha=0.6, linewidth=1.5
+                color=color, alpha=0.4, linewidth=1.3
             )
             ax.add_artist(arrow)
         
@@ -122,9 +130,9 @@ def plot_fancy_violins(method: Method, reward_upper_bound: float):
             draw_arrow(1, o, 0, n)  # Original to Naive
             draw_arrow(1, o, 2, a)  # Original to Anchored
             
-            ax.scatter(0, n, color='black', alpha=0.8, s=10, zorder=3, edgecolors='none')
-            ax.scatter(1, o, color='black', alpha=0.8, s=10, zorder=3, edgecolors='none')
-            ax.scatter(2, a, color='black', alpha=0.8, s=10, zorder=3, edgecolors='none')
+            ax.scatter(0, n, color='black', alpha=0.5, s=10, zorder=3, edgecolors='none')
+            ax.scatter(1, o, color='black', alpha=0.5, s=10, zorder=3, edgecolors='none')
+            ax.scatter(2, a, color='black', alpha=0.5, s=10, zorder=3, edgecolors='none')
 
         ax.set_title(label, fontsize=10, pad=3)
         if ax == ax1:
@@ -134,19 +142,13 @@ def plot_fancy_violins(method: Method, reward_upper_bound: float):
                            fontsize=8, rotation=0, ha='center')
         ax.tick_params(axis='x', which='major', pad=0)
         ax.set_xlim(-0.5, 2.5)
-        ax.tick_params(axis='both', which='major', labelsize=8)
+        ax.tick_params(axis='both', which='major', labelsize=6)
         
         for spine in ax.spines.values():
             spine.set_visible(False)
         
         ax.yaxis.grid(True, linestyle='--', alpha=0.3)
         ax.xaxis.grid(False)
-        
-        # Set y-axis limits based on the reward upper bound
-        y_min = min(min(naive), min(original), min(anchored))
-        y_max = max(max(naive), max(original), max(anchored), reward_upper_bound)
-        padding = 0.05 * (y_max - y_min)
-        ax.set_ylim(y_min - padding, y_max + padding)
     
     plot_violin(ax1, method.naive.Source, method.original.Source, method.anchored.Source, "Tested on Source")
     plot_violin(ax2, method.naive.Target, method.original.Target, method.anchored.Target, "Tested on Target")
@@ -154,18 +156,19 @@ def plot_fancy_violins(method: Method, reward_upper_bound: float):
     plt.subplots_adjust(left=0.1, right=0.98, bottom=0.2, top=0.9, wspace=0.1)
     fig.suptitle('')
     
-    os.makedirs('plots', exist_ok=True)
-    plt.savefig('plots/fancy_violins.svg', bbox_inches='tight')
-    print(f"Figure saved as {os.path.abspath('plots/fancy_violins.svg')}")
+    os.makedirs(output_folder, exist_ok=True)
+    output_path = os.path.join(output_folder, 'fancy_violins.svg')
+    plt.savefig(output_path, bbox_inches='tight')
+    print(f"Figure saved as {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Load pickle files from a folder structure and visualize results.')
     parser.add_argument('folder', type=str, help='folder containing the pickle files')
     parser.add_argument('--plot', action='store_true', help='generate a plot of the results')
-    parser.add_argument('--reward_upper_bound', type=float, default=200, help='upper bound for the reward')
     args = parser.parse_args()
 
-    method = load_pickles_from_folder(Path(args.folder))
+    input_folder = Path(args.folder)
+    method = load_pickles_from_folder(input_folder)
     print("Method:")
     print(method)
     result = calculate_results(method)
@@ -173,4 +176,5 @@ if __name__ == "__main__":
     print(result)
 
     if args.plot:
-        plot_fancy_violins(method, args.reward_upper_bound)
+        output_folder = Path("plots") / input_folder.name
+        plot_fancy_violins(method, output_folder)
