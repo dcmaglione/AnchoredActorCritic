@@ -6,21 +6,21 @@ trained_original="trained/lander-custom/a_n:0.01,e:51,l:(0.001,1e-05),s_s:10000,
 
 # Define arrays for trained_naive and trained_anchored
 trained_naive=(
-    "trained/lander-custom/a_n:0.01,e:10,l:0.001,p:RVWBW5Y,s_s:15000,x:WT3XD2POHV6ZLJW/seeds/1/epochs/9"
-    "trained/lander-custom/a_n:0.01,e:10,l:0.001,p:EAUU6QD,s_s:15000,x:JAJE2X3VQB4HCYA/seeds/1/epochs/9"
-    "trained/lander-custom/a_n:0.01,e:10,l:0.001,p:PEJYDXC,s_s:15000,x:TZDWP4LRAMP6LIO/seeds/1/epochs/9"
-    "trained/lander-custom/a_n:0.01,e:10,l:0.001,p:LGFJZP3,s_s:15000,x:WWHBSZL3HKWRXTJ/seeds/1/epochs/9"
-    "trained/lander-custom/a_n:0.01,e:10,l:0.001,p:FSO3LCW,s_s:15000,x:QMDJZJ3VTMGRRE5/seeds/1/epochs/9"
-    "trained/lander-custom/a_n:0.01,e:10,l:0.001,p:TF6CGLY,s_s:15000,x:UQC2GFI3WULBCCL/seeds/1/epochs/9"
+    "trained/lander-custom/a_n:0.01,e:10,l:1e-05,p:TAXGZDV,s_s:15000,x:7CK3LYQWJOK62WG/seeds/1/epochs/9"
+    "trained/lander-custom/a_n:0.01,e:10,l:1e-05,p:LFWQFDG,s_s:15000,x:CWIUTXCBQN5F3HB/seeds/1/epochs/9"
+    "trained/lander-custom/a_n:0.01,e:10,l:1e-05,p:NSFKCS2,s_s:15000,x:FWNSCXXW7YVUAXA/seeds/1/epochs/9"
+    "trained/lander-custom/a_n:0.01,e:10,l:1e-05,p:WZ3RI4I,s_s:15000,x:OKUZTQOAPAJTVPR/seeds/1/epochs/9"
+    "trained/lander-custom/a_n:0.01,e:10,l:1e-05,p:XPJKOT7,s_s:15000,x:7OGNTNLQ2F6T2EY/seeds/1/epochs/9"
+    "trained/lander-custom/a_n:0.01,e:10,l:1e-05,p:I4AXL64,s_s:15000,x:7W3XFW6NVWI35ZT/seeds/1/epochs/9"
 )
 
 trained_anchored=(
-    "trained/lander-custom/a:True,a_n:0.01,e:10,l:0.001,p:PEJYDXC,s_s:15000,x:TZDWP4LRAMP6LIO/seeds/1/epochs/9"
-    "trained/lander-custom/a:True,a_n:0.01,e:10,l:0.001,p:LGFJZP3,s_s:15000,x:WWHBSZL3HKWRXTJ/seeds/1/epochs/9"
-    "trained/lander-custom/a:True,a_n:0.01,e:10,l:0.001,p:RVWBW5Y,s_s:15000,x:WT3XD2POHV6ZLJW/seeds/1/epochs/9"
-    "trained/lander-custom/a:True,a_n:0.01,e:10,l:0.001,p:FSO3LCW,s_s:15000,x:QMDJZJ3VTMGRRE5/seeds/1/epochs/9"
-    "trained/lander-custom/a:True,a_n:0.01,e:10,l:0.001,p:TF6CGLY,s_s:15000,x:UQC2GFI3WULBCCL/seeds/1/epochs/9"
-    "trained/lander-custom/a:True,a_n:0.01,e:10,l:0.001,p:EAUU6QD,s_s:15000,x:JAJE2X3VQB4HCYA/seeds/1/epochs/9"
+    "trained/lander-custom/a:True,a_n:0.01,e:10,l:1e-05,p:TAXGZDV,s_s:15000,x:7CK3LYQWJOK62WG/seeds/1/epochs/9"
+    "trained/lander-custom/a:True,a_n:0.01,e:10,l:1e-05,p:WZ3RI4I,s_s:15000,x:OKUZTQOAPAJTVPR/seeds/1/epochs/9"
+    "trained/lander-custom/a:True,a_n:0.01,e:10,l:1e-05,p:I4AXL64,s_s:15000,x:7W3XFW6NVWI35ZT/seeds/1/epochs/9"
+    "trained/lander-custom/a:True,a_n:0.01,e:10,l:1e-05,p:LFWQFDG,s_s:15000,x:CWIUTXCBQN5F3HB/seeds/1/epochs/9"
+    "trained/lander-custom/a:True,a_n:0.01,e:10,l:1e-05,p:NSFKCS2,s_s:15000,x:FWNSCXXW7YVUAXA/seeds/1/epochs/9"
+    "trained/lander-custom/a:True,a_n:0.01,e:10,l:1e-05,p:XPJKOT7,s_s:15000,x:7OGNTNLQ2F6T2EY/seeds/1/epochs/9"
 )
 
 
