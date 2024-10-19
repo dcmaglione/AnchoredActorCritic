@@ -22,11 +22,11 @@ run_tests() {
     local config_type=$1
     shift
     local paths=("$@")
-    PYTHONUNBUFFERED=1 python -m envs.Pendulum.test_pendulum "${paths[@]}" --store_results "results/pendulum/${config_type}/Source.pkl" --gravity 13 |
-    tee >(grep "Average Reward" | tail -n 1) &
+    echo "Testing ${config_type} configuration on source environment:"
+    PYTHONUNBUFFERED=1 python -m envs.Pendulum.test_pendulum "${paths[@]}" --store_results "results/pendulum/${config_type}/Source.pkl" --gravity 13 &
     sleep 1
-    PYTHONUNBUFFERED=1 python -m envs.Pendulum.test_pendulum "${paths[@]}" --store_results "results/pendulum/${config_type}/Target.pkl" --gravity 4 |
-    tee >(grep "Average Reward" | tail -n 1) &
+    echo "Testing ${config_type} configuration on target environment:"
+    PYTHONUNBUFFERED=1 python -m envs.Pendulum.test_pendulum "${paths[@]}" --store_results "results/pendulum/${config_type}/Target.pkl" --gravity 4 &
     sleep 1
 }
 
