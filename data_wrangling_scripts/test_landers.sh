@@ -23,10 +23,10 @@ run_tests() {
     shift
     local paths=("$@")
     echo "Testing ${config_type} configuration on source environment:"
-    PYTHONUNBUFFERED=1 python -m envs.LunarLander.test_lander "${paths[@]}" --store_results "results/lander/${config_type}/Source.pkl" --initial-random 1000.0 &
+    PYTHONUNBUFFERED=1 python -m envs.LunarLander.test_lander "${paths[@]}" --store_results "results/lander/${config_type}/Source.pkl" &
     sleep 1
     echo "Testing ${config_type} configuration on target environment:"
-    PYTHONUNBUFFERED=1 python -m envs.LunarLander.test_lander "${paths[@]}" --store_results "results/lander/${config_type}/Target.pkl" --initial-random 500.0 &
+    PYTHONUNBUFFERED=1 python -m envs.LunarLander.test_lander "${paths[@]}" --store_results "results/lander/${config_type}/Target.pkl" --gravity "-2.0" &
     sleep 1
 }
 

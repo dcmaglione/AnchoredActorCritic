@@ -8,11 +8,11 @@ rm -f results/lander/original/paths.txt
 
 train_lander() {
     local seed=$1
-    PYTHONUNBUFFERED=1 python -m envs.LunarLander.train_lander --seed "$seed" --replay_save --initial-random 1000.0 --epochs 51 |
+    PYTHONUNBUFFERED=1 python -m envs.LunarLander.train_lander --seed "$seed" --replay_save --initial-random 1000.0 --epochs 100 |
     tee >(grep "saving at" | tail -n 1 | sed 's/.*saving at //' >> results/lander/original/paths.txt)
 }
 
-for i in $(seq 1 12); do
+for i in $(seq 1 6); do
     train_lander $i &
     sleep 1
 done

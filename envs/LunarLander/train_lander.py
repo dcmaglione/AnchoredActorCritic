@@ -26,6 +26,7 @@ def lander_serializer(
     return args_utils.Arg_Serializer.join(args_utils.Arg_Serializer(
         abbrev_to_args= {
             'w': args_utils.Serialized_Argument(name='--wind', action="store_true", help='enable wind in env'),
+            'g': args_utils.Serialized_Argument(name='--gravity', type=float, help='gravity', default=-10.0),
             'initial_random': args_utils.Serialized_Argument(name='--initial-random', type=float, help="initial randomization amount of lander", default=initial_random),
             'steps': args_utils.Serialized_Argument(name='--steps-per-epoch', type=int, help="number of total steps in one epoch", default=steps_per_epoch)
         }), args_utils.default_serializer(epochs, learning_rate, act_noise=0.01, start_steps=10000))
@@ -33,7 +34,7 @@ def lander_serializer(
 
 def train(cmd_args, hp, serializer):
     generated_params = train_utils.create_train_folder_and_params("lander-custom", hp, cmd_args, serializer)
-    env_fn = lambda: LunarLander(enable_wind=cmd_args.wind, initial_random=cmd_args.initial_random)
+    env_fn = lambda: LunarLander(enable_wind=cmd_args.wind, gravity=cmd_args.gravity, initial_random=cmd_args.initial_random)
     ddpg(env_fn, save_freq=1, **generated_params)
 
 def generate_hypers(cmd_args):

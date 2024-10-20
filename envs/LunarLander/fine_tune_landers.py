@@ -14,7 +14,7 @@ def many_fine_tunes():
         cmd_args.prev_folder = Path(folder)
         hp = train_lander.generate_hypers(cmd_args)
         hp.start_steps = 15000
-        hp.act_noise = 0.01
+        hp.act_noise = 0.001
         hp.q_importance = 0.5
         train_lander.train(cmd_args, hp, serializer)
 
