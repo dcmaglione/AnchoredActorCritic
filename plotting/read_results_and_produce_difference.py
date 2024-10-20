@@ -84,17 +84,23 @@ def calculate_results(method: Method) -> Result:
         )
     )
 
-def plot_fancy_violins(method: Method, output_folder: str):
+def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(4.2, 1.3), sharey=True)
+    fig, axes = plt.subplots(3, 2, figsize=(6, 3.2), sharey='row')
 
-    def plot_violin(ax, naive: List[float], original: List[float], anchored: List[float], label: str):
+    env_names = {
+        'pendulum': 'Pendulum',
+        'reacher': 'Reacher',
+        'lander': 'Lunar Lander'  # Moved 'lander' to the end
+    }
+
+    def plot_violin(ax, naive: List[float], original: List[float], anchored: List[float], show_x_labels: bool, show_y_label: bool, show_y_ticks: bool):
         positions = [0, 1, 2]
         data = [naive, original, anchored]
         
-        parts = ax.violinplot(data, positions, points=100, widths=0.8, showmeans=False, showextrema=False, showmedians=False)
+        parts = ax.violinplot(data, positions, points=100, widths=0.5, showmeans=False, showextrema=False, showmedians=False)
         
         for pc in parts['bodies']:
             pc.set_facecolor('white')
@@ -121,7 +127,7 @@ def plot_fancy_violins(method: Method, output_folder: str):
                 xyA=(start_x, start_y), xyB=(end_x, end_y),
                 coordsA="data", coordsB="data",
                 axesA=ax, axesB=ax,
-                arrowstyle="->", shrinkA=3.5, shrinkB=1.5,
+                arrowstyle="->, head_length=0.6, head_width=0.4", shrinkA=3.5, shrinkB=1.5,
                 color=color, alpha=0.4, linewidth=1.3
             )
             ax.add_artist(arrow)
@@ -134,47 +140,82 @@ def plot_fancy_violins(method: Method, output_folder: str):
             ax.scatter(1, o, color='black', alpha=0.5, s=10, zorder=3, edgecolors='none')
             ax.scatter(2, a, color='black', alpha=0.5, s=10, zorder=3, edgecolors='none')
 
-        ax.set_title(label, fontsize=10, pad=3)
-        if ax == ax1:
-            ax.set_ylabel('Rewards', fontsize=8)
+        # Remove the title setting
+        # ax.set_title(label, fontsize=10, pad=3)
+
         ax.set_xticks([0, 1, 2])
-        ax.set_xticklabels(['Naively-tuned\non target', 'Agents trained\non source', 'Anchor-tuned\non target'], 
-                           fontsize=8, rotation=0, ha='center')
+        if show_x_labels:
+            ax.set_xticklabels(['Naively-tuned\non target', 'Agents trained\non source', 'Anchor-tuned\non target'], 
+                               fontsize=8, rotation=0, ha='center')
+        else:
+            ax.set_xticklabels([])
         ax.tick_params(axis='x', which='major', pad=0)
         ax.set_xlim(-0.5, 2.5)
-        ax.tick_params(axis='both', which='major', labelsize=6)
         
         for spine in ax.spines.values():
             spine.set_visible(False)
         
         ax.yaxis.grid(True, linestyle='--', alpha=0.3)
         ax.xaxis.grid(False)
-    
-    plot_violin(ax1, method.naive.Source, method.original.Source, method.anchored.Source, "Testing on Source")
-    plot_violin(ax2, method.naive.Target, method.original.Target, method.anchored.Target, "Testing on Target")
-    
-    plt.subplots_adjust(left=0.1, right=0.98, bottom=0.2, top=0.9, wspace=0.1)
-    fig.suptitle('')
-    
+
+        # Move y-axis ticks to the right
+        ax.yaxis.tick_right()
+
+        if show_y_ticks:
+            ax.tick_params(axis='y', which='major', labelsize=6, labelright=True)
+        else:
+            ax.tick_params(axis='y', which='both', left=False, right=True, labelleft=False, labelright=False)
+
+        if show_y_label:
+            ax.yaxis.set_label_position("right")
+            ax.set_ylabel('Rewards', fontsize=8, rotation=270, labelpad=10)
+
+    for i, (env, method) in enumerate(methods.items()):
+        plot_violin(axes[i, 0], method.naive.Source, method.original.Source, method.anchored.Source, 
+                    i == 2, False, False)
+        plot_violin(axes[i, 1], method.naive.Target, method.original.Target, method.anchored.Target, 
+                    i == 2, True, True)
+        
+        # Set the environment label on the left, rotated 90 degrees
+        axes[i, 0].set_ylabel(env_names[env], fontsize=10, rotation=90, ha='center', va='center')
+        axes[i, 0].yaxis.set_label_position("left")
+
+    # Add separation lines
+    line_positions = [2/3, 1/3]  # Adjusted positions for two lines
+    for y_position in line_positions:
+        line = plt.Line2D([-0.03, 1.065], [y_position, y_position],  # Adjusted x-coordinates
+                          transform=fig.transFigure, color='#cccccc', 
+                          linestyle='-', linewidth=0.5)
+        fig.add_artist(line)
+
+    # Add titles only for the first row
+    axes[0, 0].set_title("Testing on Source", fontsize=10, pad=3)
+    axes[0, 1].set_title("Testing on Target", fontsize=10, pad=3)
+
+    plt.tight_layout()
+    fig.subplots_adjust(left=0.0, right=1.0, bottom=0.0, top=1.0, wspace=0.1, hspace=0.1)
     os.makedirs(output_folder, exist_ok=True)
-    output_path = os.path.join(output_folder, 'fancy_violins.svg')
+    output_path = os.path.join(output_folder, 'sim2sim_violins.svg')
     plt.savefig(output_path, bbox_inches='tight')
     print(f"Figure saved as {os.path.abspath(output_path)}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Load pickle files from a folder structure and visualize results.')
-    parser.add_argument('folder', type=str, help='folder containing the pickle files')
+    parser = argparse.ArgumentParser(description='Load pickle files from multiple folders and visualize results.')
+    parser.add_argument('folder', type=str, help='parent folder containing environment folders')
     parser.add_argument('--plot', action='store_true', help='generate a plot of the results')
     args = parser.parse_args()
 
     input_folder = Path(args.folder)
-    method = load_pickles_from_folder(input_folder)
-    print("Method:")
-    print(method)
-    result = calculate_results(method)
-    print("\nResult:")
-    print(result)
+    methods = {}
+    for env in ['pendulum', 'reacher', 'lander']:  # Changed the order here
+        env_folder = input_folder / env
+        if env_folder.exists():
+            methods[env] = load_pickles_from_folder(env_folder)
+            print(f"\nMethod for {env}:")
+            print(methods[env])
+            result = calculate_results(methods[env])
+            print(f"\nResult for {env}:")
+            print(result)
 
     if args.plot:
-        output_folder = Path("plots") / input_folder.name
-        plot_fancy_violins(method, output_folder)
+        plot_fancy_violins(methods, "plots")
