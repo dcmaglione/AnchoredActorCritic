@@ -28,7 +28,7 @@ def plot_fingertip_position(runs, ax, title, show_legend=True, show_y_label=True
         cumulative_distances = np.cumsum(distances)
         total_distance = cumulative_distances[-1]
         
-        min_arrow_distance = 0.05
+        min_arrow_distance = 0.1
         num_arrows = min(20, max(5, int(total_distance / min_arrow_distance)))
         arrow_distances = np.linspace(0, total_distance, num_arrows + 2)[1:-1]
         
