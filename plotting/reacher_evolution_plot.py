@@ -66,4 +66,4 @@ if __name__ == "__main__":
     plot_fingertip_position(anchored, ax2, 'Fine-tuned with anchors', show_legend=True, show_y_label=False)
     
     plt.tight_layout()
-    plt.savefig('plots/reacher/reacher_evolution.svg', bbox_inches='tight')
+    plt.savefig('plots/reacher/reacher_evolution.pdf', bbox_inches='tight')

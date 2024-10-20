@@ -88,7 +88,7 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
 
-    fig, axes = plt.subplots(3, 2, figsize=(6, 3.2), sharey='row')
+    fig, axes = plt.subplots(3, 2, figsize=(3.5, 3.5), sharey='row')
 
     env_names = {
         'pendulum': 'Pendulum',
@@ -145,8 +145,28 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
 
         ax.set_xticks([0, 1, 2])
         if show_x_labels:
-            ax.set_xticklabels(['Naively-tuned\non target', 'Agents trained\non source', 'Anchor-tuned\non target'], 
-                               fontsize=8, rotation=0, ha='center')
+            ax.set_xticklabels(['T', 'S', 'T'],
+                                rotation=0, ha='center')
+            
+            # Get the positions of the x-ticks
+            tick_positions = ax.get_xticks()
+            
+            # Add arrows with labels
+            arrow_props = dict(arrowstyle='->', color='gray', lw=1.5, shrinkA=10, shrinkB=7)
+            
+            # Arrow from Source to Naive Target
+            ax.annotate('', xy=(tick_positions[0], -0.1), xytext=(tick_positions[1], -0.1),
+                        xycoords=ax.get_xaxis_transform(), textcoords=ax.get_xaxis_transform(),
+                        arrowprops=arrow_props)
+            ax.text((tick_positions[0] + tick_positions[1])/2, -0.21, 'naive',
+                    ha='center', va='center', transform=ax.get_xaxis_transform())
+            
+            # Arrow from Source to Anchored Target
+            ax.annotate('', xy=(tick_positions[2], -0.1), xytext=(tick_positions[1], -0.1),
+                        xycoords=ax.get_xaxis_transform(), textcoords=ax.get_xaxis_transform(),
+                        arrowprops=arrow_props)
+            ax.text((tick_positions[1] + tick_positions[2])/2, -0.21, '$\\mathbf{ours}$',
+                    ha='center', va='center', transform=ax.get_xaxis_transform())
         else:
             ax.set_xticklabels([])
         ax.tick_params(axis='x', which='major', pad=0)
@@ -192,13 +212,13 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
         fig.add_artist(line)
 
     # Add titles only for the first row
-    axes[0, 0].set_title("Testing on Source", fontsize=10, pad=3)
-    axes[0, 1].set_title("Testing on Target", fontsize=10, pad=3)
+    axes[0, 0].set_title("Testing on S", fontsize=10, pad=10)
+    axes[0, 1].set_title("Testing on T", fontsize=10, pad=10)
 
     plt.tight_layout()
     fig.subplots_adjust(left=0.0, right=1.0, bottom=0.0, top=1.0, wspace=0.1, hspace=0.1)
     os.makedirs(output_folder, exist_ok=True)
-    output_path = os.path.join(output_folder, 'sim2sim_violins.svg')
+    output_path = os.path.join(output_folder, 'sim2sim_violins.pdf')
     plt.savefig(output_path, bbox_inches='tight')
     print(f"Figure saved as {os.path.abspath(output_path)}")
 
