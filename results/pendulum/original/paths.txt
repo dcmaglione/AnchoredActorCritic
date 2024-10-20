@@ -1,0 +1,12 @@
+trained/Pendulum-custom/a_n:0.1,e:7,g:13,l:0.0001,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/1/epochs/6
+trained/Pendulum-custom/a_n:0.1,e:7,g:13,l:0.0001,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/4/epochs/6
+trained/Pendulum-custom/a_n:0.1,e:7,g:13,l:0.0001,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/2/epochs/6
+trained/Pendulum-custom/a_n:0.1,e:7,g:13,l:0.0001,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/3/epochs/6
+trained/Pendulum-custom/a_n:0.1,e:7,g:13,l:0.0001,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/5/epochs/6
+trained/Pendulum-custom/a_n:0.1,e:7,g:13,l:0.0001,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/9/epochs/6
+trained/Pendulum-custom/a_n:0.1,e:7,g:13,l:0.0001,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/6/epochs/6
+trained/Pendulum-custom/a_n:0.1,e:7,g:13,l:0.0001,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/7/epochs/6
+trained/Pendulum-custom/a_n:0.1,e:7,g:13,l:0.0001,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/10/epochs/6
+trained/Pendulum-custom/a_n:0.1,e:7,g:13,l:0.0001,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/12/epochs/6
+trained/Pendulum-custom/a_n:0.1,e:7,g:13,l:0.0001,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/8/epochs/6
+trained/Pendulum-custom/a_n:0.1,e:7,g:13,l:0.0001,s_s:1000,x:NRBF4XDSCEQQH7O/seeds/11/epochs/6
