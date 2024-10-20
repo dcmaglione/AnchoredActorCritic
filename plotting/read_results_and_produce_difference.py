@@ -88,7 +88,7 @@ def plot_fancy_violins(method: Method, output_folder: str):
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(4, 1.3), sharey=True)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(4.2, 1.3), sharey=True)
 
     def plot_violin(ax, naive: List[float], original: List[float], anchored: List[float], label: str):
         positions = [0, 1, 2]
@@ -121,7 +121,7 @@ def plot_fancy_violins(method: Method, output_folder: str):
                 xyA=(start_x, start_y), xyB=(end_x, end_y),
                 coordsA="data", coordsB="data",
                 axesA=ax, axesB=ax,
-                arrowstyle="->", shrinkA=4, shrinkB=2,
+                arrowstyle="->", shrinkA=3.5, shrinkB=1.5,
                 color=color, alpha=0.4, linewidth=1.3
             )
             ax.add_artist(arrow)
@@ -138,7 +138,7 @@ def plot_fancy_violins(method: Method, output_folder: str):
         if ax == ax1:
             ax.set_ylabel('Rewards', fontsize=8)
         ax.set_xticks([0, 1, 2])
-        ax.set_xticklabels(['Naively-tuned\non target', 'Trained\non source', 'Anchor-tuned\non target'], 
+        ax.set_xticklabels(['Naively-tuned\non target', 'Agents trained\non source', 'Anchor-tuned\non target'], 
                            fontsize=8, rotation=0, ha='center')
         ax.tick_params(axis='x', which='major', pad=0)
         ax.set_xlim(-0.5, 2.5)
@@ -150,8 +150,8 @@ def plot_fancy_violins(method: Method, output_folder: str):
         ax.yaxis.grid(True, linestyle='--', alpha=0.3)
         ax.xaxis.grid(False)
     
-    plot_violin(ax1, method.naive.Source, method.original.Source, method.anchored.Source, "Tested on Source")
-    plot_violin(ax2, method.naive.Target, method.original.Target, method.anchored.Target, "Tested on Target")
+    plot_violin(ax1, method.naive.Source, method.original.Source, method.anchored.Source, "Testing on Source")
+    plot_violin(ax2, method.naive.Target, method.original.Target, method.anchored.Target, "Testing on Target")
     
     plt.subplots_adjust(left=0.1, right=0.98, bottom=0.2, top=0.9, wspace=0.1)
     fig.suptitle('')

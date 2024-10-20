@@ -20,7 +20,7 @@ def lander_serializer(
             1e-3,
             steps_per_epoch*epochs,
             power=2,
-            end_learning_rate=1e-5
+            end_learning_rate=1e-4
         )
 
     return args_utils.Arg_Serializer.join(args_utils.Arg_Serializer(
