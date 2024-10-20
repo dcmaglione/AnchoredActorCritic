@@ -12,7 +12,7 @@ fine_tune_naive() {
     local file=$1
     local output_file=$2
     
-    PYTHONUNBUFFERED=1 python -m envs.LunarLander.fine_tune_landers "$file" --seed 1 --gravity "-2.0" --epochs 8 | 
+    PYTHONUNBUFFERED=1 python -m envs.LunarLander.fine_tune_landers "$file" --seed 1 --gravity "-2.0" --epochs 15 | 
     tee >(grep "saving at" | tail -n 1 | sed 's/.*saving at //' >> "$output_file")
 }
 
@@ -20,7 +20,7 @@ fine_tune_anchored() {
     local file=$1
     local output_file=$2
     
-    PYTHONUNBUFFERED=1 python -m envs.LunarLander.fine_tune_landers "$file" --seed 1 -a --gravity "-2.0" --epochs 8 | 
+    PYTHONUNBUFFERED=1 python -m envs.LunarLander.fine_tune_landers "$file" --seed 1 -a --gravity "-2.0" --epochs 15 | 
     tee >(grep "saving at" | tail -n 1 | sed 's/.*saving at //' >> "$output_file")
 }
 

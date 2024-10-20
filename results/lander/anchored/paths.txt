@@ -1,6 +1,6 @@
-trained/lander-custom/a:True,a_n:(0.1,0.1),e:8,g:-2,l:0.0001,p:DSL6HQF,s_s:10000,x:Y4O3CYMR7IZ7WI3/seeds/1/epochs/7
-trained/lander-custom/a:True,a_n:(0.1,0.1),e:8,g:-2,l:0.0001,p:V7VATJ5,s_s:10000,x:FTEY6D7CQDELGGZ/seeds/1/epochs/7
-trained/lander-custom/a:True,a_n:(0.1,0.1),e:8,g:-2,l:0.0001,p:GFBQ7I7,s_s:10000,x:IGJFP267H4FCWVW/seeds/1/epochs/7
-trained/lander-custom/a:True,a_n:(0.1,0.1),e:8,g:-2,l:0.0001,p:D5EYVL5,s_s:10000,x:JFDEIDEHKQPLVSQ/seeds/1/epochs/7
-trained/lander-custom/a:True,a_n:(0.1,0.1),e:8,g:-2,l:0.0001,p:H5WPAL4,s_s:10000,x:TEB5IFGZ2HAVPMX/seeds/1/epochs/7
-trained/lander-custom/a:True,a_n:(0.1,0.1),e:8,g:-2,l:0.0001,p:TIQ2PF2,s_s:10000,x:FWN7PTMWYX73YVH/seeds/1/epochs/7
+trained/lander-custom/a:True,a_n:(0.1,0.1),e:15,g:-2,l:0.0001,p:DSL6HQF,s_s:10000,x:Y4O3CYMR7IZ7WI3/seeds/1/epochs/14
+trained/lander-custom/a:True,a_n:(0.1,0.1),e:15,g:-2,l:0.0001,p:D5EYVL5,s_s:10000,x:JFDEIDEHKQPLVSQ/seeds/1/epochs/14
+trained/lander-custom/a:True,a_n:(0.1,0.1),e:15,g:-2,l:0.0001,p:V7VATJ5,s_s:10000,x:FTEY6D7CQDELGGZ/seeds/1/epochs/14
+trained/lander-custom/a:True,a_n:(0.1,0.1),e:15,g:-2,l:0.0001,p:GFBQ7I7,s_s:10000,x:IGJFP267H4FCWVW/seeds/1/epochs/14
+trained/lander-custom/a:True,a_n:(0.1,0.1),e:15,g:-2,l:0.0001,p:TIQ2PF2,s_s:10000,x:FWN7PTMWYX73YVH/seeds/1/epochs/14
+trained/lander-custom/a:True,a_n:(0.1,0.1),e:15,g:-2,l:0.0001,p:H5WPAL4,s_s:10000,x:TEB5IFGZ2HAVPMX/seeds/1/epochs/14
