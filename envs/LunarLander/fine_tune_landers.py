@@ -1,13 +1,13 @@
 import argparse
 
-import keras
 from . import train_lander
 from pathlib import Path
 
 def many_fine_tunes():
     parser = argparse.ArgumentParser()
     parser.add_argument('folders', nargs="+", type=str, help='location of training runs to fine tune')
-    serializer = train_lander.lander_serializer(epochs=20, learning_rate=1e-4, act_noise=keras.optimizers.schedules.ConstantSchedule(0.1))
+    constant_schedule = train_lander.WithStrPolyDecay(initial_learning_rate=0.1, decay_steps=1.0, end_learning_rate=0.1)
+    serializer = train_lander.lander_serializer(epochs=20, learning_rate=1e-4, act_noise=constant_schedule)
     serializer.add_serialized_args_to_parser(parser)
     cmd_args = parser.parse_args()
     for folder in cmd_args.folders:
