@@ -62,8 +62,8 @@ if __name__ == "__main__":
     
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6, 2.4))
     
-    plot_fingertip_position(naive, ax1, 'Naive', show_legend=False, show_y_label=True)
-    plot_fingertip_position(anchored, ax2, 'Anchored', show_legend=True, show_y_label=False)
+    plot_fingertip_position(naive, ax1, 'Fine-tuned naively', show_legend=False, show_y_label=True)
+    plot_fingertip_position(anchored, ax2, 'Fine-tuned with anchors', show_legend=True, show_y_label=False)
     
     plt.tight_layout()
     plt.savefig('plots/reacher/reacher_evolution.svg', bbox_inches='tight')

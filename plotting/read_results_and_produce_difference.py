@@ -93,10 +93,10 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
     env_names = {
         'pendulum': 'Pendulum',
         'reacher': 'Reacher',
-        'lander': 'Lunar Lander'  # Moved 'lander' to the end
+        'lander': 'Lunar Lander'
     }
 
-    def plot_violin(ax, naive: List[float], original: List[float], anchored: List[float], show_x_labels: bool, show_y_label: bool, show_y_ticks: bool):
+    def plot_violin(ax, naive: List[float], original: List[float], anchored: List[float], show_x_labels: bool, show_y_label: bool, show_y_ticks: bool, env: str):
         positions = [0, 1, 2]
         data = [naive, original, anchored]
         
@@ -170,11 +170,14 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
             ax.yaxis.set_label_position("right")
             ax.set_ylabel('Rewards', fontsize=8, rotation=270, labelpad=10)
 
+        if env == 'pendulum':
+            ax.set_ylim(top=400)
+
     for i, (env, method) in enumerate(methods.items()):
         plot_violin(axes[i, 0], method.naive.Source, method.original.Source, method.anchored.Source, 
-                    i == 2, False, False)
+                    i == 2, False, False, env)
         plot_violin(axes[i, 1], method.naive.Target, method.original.Target, method.anchored.Target, 
-                    i == 2, True, True)
+                    i == 2, True, True, env)
         
         # Set the environment label on the left, rotated 90 degrees
         axes[i, 0].set_ylabel(env_names[env], fontsize=10, rotation=90, ha='center', va='center')
