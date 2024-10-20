@@ -3,6 +3,7 @@ from anchored_rl.utils import save_utils, loss_composition
 import numpy as np
 import os
 
+
 def test(actor, env, seed=123, render=True, num_steps=400):
     o,i = env.reset(seed=seed)
     high = env.action_space.high
@@ -26,7 +27,8 @@ def folder_to_episode_rewards(env, render, num_tests, folder_path, steps=400, se
         # print(np.array([x], dtype=np.float32))
         return saved(np.array([x], dtype=np.float32))[0]
     runs = list(map(lambda i: test(actor, env, seed=seed+i,
-                    render=render, num_steps=steps)[1], range(num_tests)))
+                    render=render, num_steps=steps)[0], range(num_tests)))
+    
     return runs
 
 def run_tests(env, cmd_args):
