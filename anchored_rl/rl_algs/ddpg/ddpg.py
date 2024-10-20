@@ -158,6 +158,16 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
     logger = TensorflowLogger(**logger_kwargs)
     # logger.save_config({"hyperparams": hp.__dict__, "extra_hyperparams": extra_hyperparameters})
 
+    noise_schedule = (
+        hp.act_noise if isinstance(hp.act_noise, keras.optimizers.schedules.LearningRateSchedule)
+        else keras.optimizers.schedules.PolynomialDecay(
+            initial_learning_rate=hp.act_noise,
+            decay_steps=hp.steps_per_epoch * hp.epochs,
+            end_learning_rate=0.0,
+            power=1.0  # Linear decay
+        )
+    )
+
     tf.random.set_seed(hp.seed)
     np.random.seed(hp.seed)
 
@@ -331,7 +341,7 @@ def ddpg(env_fn: Callable[[], gym.Env], hp: HyperParams=HyperParams(),actor_crit
         if t < hp.start_steps and random_start:
             a = env.action_space.sample()
         else:
-            a = get_action(o, hp.act_noise*(total_steps - t)/total_steps)
+            a = get_action(o, noise_schedule(t))
 
         # Step the env
         o2, r, d, _, _ = env.step(a)

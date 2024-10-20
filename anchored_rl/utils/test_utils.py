@@ -27,7 +27,7 @@ def folder_to_episode_rewards(env, render, num_tests, folder_path, steps=400, se
         # print(np.array([x], dtype=np.float32))
         return saved(np.array([x], dtype=np.float32))[0]
     runs = list(map(lambda i: test(actor, env, seed=seed+i,
-                    render=render, num_steps=steps)[0], range(num_tests)))
+                    render=render, num_steps=steps)[1], range(num_tests)))
     
     return runs
 

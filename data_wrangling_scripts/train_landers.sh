@@ -12,7 +12,7 @@ train_lander() {
     tee >(grep "saving at" | tail -n 1 | sed 's/.*saving at //' >> results/lander/original/paths.txt)
 }
 
-for i in $(seq 1 12); do
+for i in $(seq 1 6); do
     train_lander $i &
     sleep 1
 done

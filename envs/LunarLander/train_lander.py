@@ -13,7 +13,8 @@ def lander_serializer(
         epochs=50,
         steps_per_epoch=5000,
         learning_rate=None,
-        initial_random=1000.0
+        initial_random=1000.0,
+        act_noise=None
     ):
     if learning_rate is None:
         learning_rate = WithStrPolyDecay(
@@ -23,13 +24,21 @@ def lander_serializer(
             end_learning_rate=1e-4
         )
 
+    if act_noise is None:
+        act_noise = WithStrPolyDecay(
+            0.3,
+            steps_per_epoch*epochs,
+            power=1,
+            end_learning_rate=0.1
+        )
+
     return args_utils.Arg_Serializer.join(args_utils.Arg_Serializer(
         abbrev_to_args= {
             'w': args_utils.Serialized_Argument(name='--wind', action="store_true", help='enable wind in env'),
             'g': args_utils.Serialized_Argument(name='--gravity', type=float, help='gravity', default=-10.0),
             'initial_random': args_utils.Serialized_Argument(name='--initial-random', type=float, help="initial randomization amount of lander", default=initial_random),
             'steps': args_utils.Serialized_Argument(name='--steps-per-epoch', type=int, help="number of total steps in one epoch", default=steps_per_epoch)
-        }), args_utils.default_serializer(epochs, learning_rate, act_noise=0.01, start_steps=10000))
+        }), args_utils.default_serializer(epochs, learning_rate, act_noise=act_noise, start_steps=10000))
 
 
 def train(cmd_args, hp, serializer):
