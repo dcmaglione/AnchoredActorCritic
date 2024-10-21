@@ -190,9 +190,9 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
         ax.yaxis.tick_right()
 
         if show_y_ticks:
-            ax.tick_params(axis='y', which='major', labelsize=6, labelright=True)
+            ax.tick_params(axis='y', which='major', labelsize=6, labelright=True, left=False)
         else:
-            ax.tick_params(axis='y', which='both', left=False, right=True, labelleft=False, labelright=False)
+            ax.tick_params(axis='y', which='both', left=False, right=False, labelleft=False, labelright=False)
 
         if show_y_label:
             ax.yaxis.set_label_position("right")
@@ -210,6 +210,9 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
         # Set the environment label on the left, rotated 90 degrees
         axes[i, 0].set_ylabel(env_names[env], fontsize=10, rotation=90, ha='center', va='center')
         axes[i, 0].yaxis.set_label_position("left")
+        
+        # Remove the tick marks from the left plot
+        axes[i, 0].tick_params(axis='y', which='both', left=False, right=False)
 
     # Add separation lines
     line_positions = [2/3, 1/3]  # Adjusted positions for two lines
@@ -219,12 +222,23 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
                           linestyle='-', linewidth=0.5)
         fig.add_artist(line)
 
+    # Add fancy vertical double line in the middle
+    vertical_line_left = plt.Line2D([0.5, 0.5], [-0.08, 1.0],  # x-coordinates for middle, y-coordinates for full height
+                                    transform=fig.transFigure, color='black', 
+                                    linestyle='-', linewidth=1.0)
+    vertical_line_right = plt.Line2D([0.508, 0.508], [-0.08, 1.0],  # Slightly offset to create double line effect
+                                     transform=fig.transFigure, color='black', 
+                                     linestyle='-', linewidth=1.0)
+    fig.add_artist(vertical_line_left)
+    fig.add_artist(vertical_line_right)
+
     # Add titles only for the first row
     axes[0, 0].set_title("Policy evaluations on source", fontsize=10, pad=10)
     axes[0, 1].set_title("Policy evaluations on target", fontsize=10, pad=10)
 
     plt.tight_layout()
     fig.subplots_adjust(left=0.0, right=1.0, bottom=0.0, top=1.0, wspace=0.1, hspace=0.1)
+    
     os.makedirs(output_folder, exist_ok=True)
     output_path = os.path.join(output_folder, 'sim2sim_violins.pdf')
     plt.savefig(output_path, bbox_inches='tight')
