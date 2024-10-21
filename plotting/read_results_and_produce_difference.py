@@ -212,8 +212,8 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
         fig.add_artist(line)
 
     # Add titles only for the first row
-    axes[0, 0].set_title("Testing on S", fontsize=10, pad=10)
-    axes[0, 1].set_title("Testing on T", fontsize=10, pad=10)
+    axes[0, 0].set_title("Policy evaluations on source", fontsize=10, pad=10)
+    axes[0, 1].set_title("Policy evaluations on target", fontsize=10, pad=10)
 
     plt.tight_layout()
     fig.subplots_adjust(left=0.0, right=1.0, bottom=0.0, top=1.0, wspace=0.1, hspace=0.1)
