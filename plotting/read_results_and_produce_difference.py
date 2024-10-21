@@ -100,13 +100,7 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
         positions = [0, 1, 2]
         data = [naive, original, anchored]
         
-        parts = ax.violinplot(data, positions, points=100, widths=0.5, showmeans=False, showextrema=False, showmedians=False)
-        
-        for pc in parts['bodies']:
-            pc.set_facecolor('white')
-            pc.set_edgecolor('black')
-            pc.set_alpha(0.7)
-        
+        # Define color map and calculate max change
         colors = ['#d7191c', '#fdae61', '#ffffbf', '#a6d96a', '#1a9641']
         n_bins = 256
         cmap = mcolors.LinearSegmentedColormap.from_list("custom", colors, N=n_bins)
@@ -119,6 +113,7 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
             norm_change = np.sign(norm_change) * np.power(abs(norm_change), 0.5)
             return cmap(0.5 * (norm_change + 1))
         
+        # Define draw_arrow function
         def draw_arrow(start_x, start_y, end_x, end_y):
             change = end_y - start_y
             color = get_color(change)
@@ -128,17 +123,30 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
                 coordsA="data", coordsB="data",
                 axesA=ax, axesB=ax,
                 arrowstyle="->, head_length=0.6, head_width=0.4", shrinkA=3.5, shrinkB=1.5,
-                color=color, alpha=0.4, linewidth=1.3
+                color=color, alpha=0.4, linewidth=1.3,
+                zorder=1  # Set a lower z-order for the arrows
             )
             ax.add_artist(arrow)
         
+        # Draw arrows first (behind the violin plot)
         for n, o, a in zip(naive, original, anchored):
             draw_arrow(1, o, 0, n)  # Original to Naive
             draw_arrow(1, o, 2, a)  # Original to Anchored
-            
-            ax.scatter(0, n, color='black', alpha=0.5, s=10, zorder=3, edgecolors='none')
-            ax.scatter(1, o, color='black', alpha=0.5, s=10, zorder=3, edgecolors='none')
-            ax.scatter(2, a, color='black', alpha=0.5, s=10, zorder=3, edgecolors='none')
+        
+        # Plot the violin plot on top of the arrows
+        parts = ax.violinplot(data, positions, points=100, widths=0.5, showmeans=False, showextrema=False, showmedians=False)
+        
+        for pc in parts['bodies']:
+            pc.set_facecolor('white')
+            pc.set_edgecolor('black')
+            pc.set_alpha(0.5)
+            pc.set_zorder(3)  # Set a higher z-order for the violin plot
+        
+        # Plot scatter points on top
+        for n, o, a in zip(naive, original, anchored):
+            ax.scatter(0, n, color='black', alpha=0.5, s=10, zorder=4, edgecolors='none')
+            ax.scatter(1, o, color='black', alpha=0.5, s=10, zorder=4, edgecolors='none')
+            ax.scatter(2, a, color='black', alpha=0.5, s=10, zorder=4, edgecolors='none')
 
         # Remove the title setting
         # ax.set_title(label, fontsize=10, pad=3)
