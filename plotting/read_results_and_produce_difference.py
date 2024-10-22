@@ -88,7 +88,7 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
     sns.set_style("whitegrid")
     sns.set_palette("Set2")
 
-    fig, axes = plt.subplots(3, 2, figsize=(3.5, 3.5), sharey='row')
+    fig, axes = plt.subplots(3, 2, figsize=(3.7, 3.3), sharey='row')
 
     env_names = {
         'pendulum': 'Pendulum',
@@ -153,12 +153,12 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
 
         ax.set_xticks([0, 1, 2])
         if show_x_labels:
-            ax.set_xticklabels(['T', 'S', 'T'],
+            ax.set_xticklabels(['$\\pi_{\\text{T}}$', '$\\pi_\\text{S}$',
+                                '$\\pi^{\\psi}_{\\text{T}}$'],
                                 rotation=0, ha='center')
             
             # Get the positions of the x-ticks
             tick_positions = ax.get_xticks()
-            
             # Add arrows with labels
             arrow_props = dict(arrowstyle='->', color='gray', lw=1.5, shrinkA=10, shrinkB=7)
             
@@ -166,7 +166,7 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
             ax.annotate('', xy=(tick_positions[0], -0.1), xytext=(tick_positions[1], -0.1),
                         xycoords=ax.get_xaxis_transform(), textcoords=ax.get_xaxis_transform(),
                         arrowprops=arrow_props)
-            ax.text((tick_positions[0] + tick_positions[1])/2, -0.21, 'naive',
+            ax.text((tick_positions[0] + tick_positions[1])/2, -0.20, 'naive',
                     ha='center', va='center', transform=ax.get_xaxis_transform())
             
             # Arrow from Source to Anchored Target
@@ -233,8 +233,8 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
     fig.add_artist(vertical_line_right)
 
     # Add titles only for the first row
-    axes[0, 0].set_title("Policy evaluations on source", fontsize=10, pad=10)
-    axes[0, 1].set_title("Policy evaluations on target", fontsize=10, pad=10)
+    axes[0, 0].set_title("Policy evaluations on sim S", fontsize=10, pad=10)
+    axes[0, 1].set_title("Policy evaluations on sim T", fontsize=10, pad=10)
 
     plt.tight_layout()
     fig.subplots_adjust(left=0.0, right=1.0, bottom=0.0, top=1.0, wspace=0.1, hspace=0.1)
