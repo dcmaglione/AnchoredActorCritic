@@ -11,6 +11,15 @@ import matplotlib.colors as mcolors
 import os
 from matplotlib.patches import FancyArrowPatch, ConnectionPatch
 
+import matplotlib as mpl
+
+# Set up LaTeX rendering
+mpl.rcParams['text.usetex'] = True
+mpl.rcParams['font.family'] = 'serif'
+mpl.rcParams['font.serif'] = ['Computer Modern Roman']
+mpl.rcParams['text.latex.preamble'] = r'\usepackage{amsmath}'
+
+
 T = TypeVar('T')
 
 @dataclass
@@ -153,27 +162,27 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
 
         ax.set_xticks([0, 1, 2])
         if show_x_labels:
-            ax.set_xticklabels(['$\\pi_{\\text{T}}$', '$\\pi_\\text{S}$',
-                                '$\\pi^{\\psi}_{\\text{T}}$'],
+            ax.set_xticklabels(['$\\pi_{\\text{S}\\triangleright\\text{T}}$', '$\\pi_\\text{S}$',
+                                '$\\pi_{\\text{S}\\overset{\\smash{\\psi}}{\\triangleright}\\text{T}}$'],
                                 rotation=0, ha='center')
             
             # Get the positions of the x-ticks
             tick_positions = ax.get_xticks()
             # Add arrows with labels
-            arrow_props = dict(arrowstyle='->', color='gray', lw=1.5, shrinkA=10, shrinkB=7)
+            arrow_props = dict(arrowstyle='->', color='gray', lw=1.5, shrinkA=10, shrinkB=12)
             
             # Arrow from Source to Naive Target
-            ax.annotate('', xy=(tick_positions[0], -0.1), xytext=(tick_positions[1], -0.1),
+            ax.annotate('', xy=(tick_positions[0], -0.11), xytext=(tick_positions[1], -0.11),
                         xycoords=ax.get_xaxis_transform(), textcoords=ax.get_xaxis_transform(),
                         arrowprops=arrow_props)
-            ax.text((tick_positions[0] + tick_positions[1])/2, -0.20, 'naive',
+            ax.text((tick_positions[0] + tick_positions[1])/2+0.04, -0.20, 'naive',
                     ha='center', va='center', transform=ax.get_xaxis_transform())
             
             # Arrow from Source to Anchored Target
-            ax.annotate('', xy=(tick_positions[2], -0.1), xytext=(tick_positions[1], -0.1),
+            ax.annotate('', xy=(tick_positions[2], -0.11), xytext=(tick_positions[1], -0.11),
                         xycoords=ax.get_xaxis_transform(), textcoords=ax.get_xaxis_transform(),
                         arrowprops=arrow_props)
-            ax.text((tick_positions[1] + tick_positions[2])/2, -0.21, '$\\mathbf{ours}$',
+            ax.text((tick_positions[1] + tick_positions[2])/2-0.04, -0.205, '$\\mathbf{ours}$',
                     ha='center', va='center', transform=ax.get_xaxis_transform())
         else:
             ax.set_xticklabels([])
@@ -233,8 +242,8 @@ def plot_fancy_violins(methods: Dict[str, Method], output_folder: str):
     fig.add_artist(vertical_line_right)
 
     # Add titles only for the first row
-    axes[0, 0].set_title("Policy evaluations on sim S", fontsize=10, pad=10)
-    axes[0, 1].set_title("Policy evaluations on sim T", fontsize=10, pad=10)
+    axes[0, 0].set_title("Policy evaluations on domain S", fontsize=10, pad=10)
+    axes[0, 1].set_title("Policy evaluations on domain T", fontsize=10, pad=10)
 
     plt.tight_layout()
     fig.subplots_adjust(left=0.0, right=1.0, bottom=0.0, top=1.0, wspace=0.1, hspace=0.1)

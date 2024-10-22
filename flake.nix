@@ -31,6 +31,7 @@
             buildInputs = [
                 # pkgs.nixgl.auto.nixGLDefault
                 python
+                pkgs.texliveFull
             ];
             shellHook = ''
               export PYTHONPATH=$PYTHONPATH:$(pwd)
